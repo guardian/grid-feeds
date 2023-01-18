@@ -18,7 +18,8 @@ class AssociatedPressService(
   def getAccountInfo: Future[String] = {
     ws.url(s"${config.associatedPressAPIUrl}/account/plans")
       .addHttpHeaders(("x-apikey", config.associatedPressAPIKey)).get().map { response =>
-      response.body
+        println(response.body)
+        response.body
     }
   }
 }

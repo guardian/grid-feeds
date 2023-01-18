@@ -1,2 +1,3 @@
 # Management
 GET     /management/healthcheck             controllers.HealthcheckController.healthCheck
+GET     /info                               controllers.AssociatedPressController.info
