@@ -37,3 +37,13 @@ jobs:
               - cdk/cdk.out
             grid-feeds:
               - target/grid-feeds.deb
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - working-directory: ./cdk
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run synth
+          
