@@ -28,3 +28,12 @@ jobs:
       - name: build uberjar
         run: |
           sbt -v assembly
+      - uses: guardian/actions-riff-raff@v2
+        with:
+          projectName: editorial-tools::grid-feeds
+          configPath: cdk/cdk.out/riff-raff.yaml
+          contentDirectories: |
+            cdk.out:
+              - cdk/cdk.out
+            grid-feeds:
+              - target/grid-feeds.deb
