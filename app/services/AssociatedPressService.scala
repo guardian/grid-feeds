@@ -1,15 +1,15 @@
 package services
 
-import akka.actor.ActorSystem
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import client.HttpClient.get
 import config.AppConfig
 import model.FeedResponse
+import play.api.Logging
 import play.api.libs.json.JsResult.Exception
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class AssociatedPressService(
   config: AppConfig,
@@ -17,9 +17,29 @@ class AssociatedPressService(
   implicit val materializer: Materializer,
   implicit val executionContext: ExecutionContext
 ) {
-  lazy val ws: StandaloneAhcWSClient = StandaloneAhcWSClient()
+  val associatedPressServiceActor: ActorRef = system.actorOf(Props(new AssociatedPressServiceActor(config, executionContext)), name = "associatedPressServiceActor")
 
-  def feed: Future[FeedResponse] = get(config.associatedPressAPIDefaultFeedUrl, Seq(("x-apikey", config.associatedPressAPIKey))).map(res => parseFeedResponse(res.body))
+  def start(): Unit = {
+    associatedPressServiceActor ! getFirstPageUrl
+  }
+
+  // TODO retrieve this from DynamoDB and fallback to config
+  private def getFirstPageUrl = config.associatedPressAPIDefaultFeedUrl
+}
+
+class AssociatedPressServiceActor(config: AppConfig, implicit val executionContext: ExecutionContext) extends Actor with Logging {
+  override def receive: Receive = {
+    case nextPage:String =>
+      logger.info(s"Calling: $nextPage")
+      get(nextPage, Seq(("x-apikey", config.associatedPressAPIKey)))
+        .map(response => {
+          logger.info(s"Received response: ${response.body}")
+          val parsedResponse =  parseFeedResponse(response.body)
+          // TODO write next page value to DynamoDB
+          // TODO download images in response object
+          self ! parsedResponse.data.next_page
+        })
+  }
 
   private def parseFeedResponse(res: String): FeedResponse = {
     Json.parse(res).validate[FeedResponse] match {
@@ -29,4 +49,5 @@ class AssociatedPressService(
         throw Exception(error)
     }
   }
+
 }
