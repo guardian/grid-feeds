@@ -2,7 +2,11 @@ package services
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import client.HttpClient.get
 import config.AppConfig
+import model.FeedResponse
+import play.api.libs.json.JsResult.Exception
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,10 +19,14 @@ class AssociatedPressService(
 ) {
   lazy val ws: StandaloneAhcWSClient = StandaloneAhcWSClient()
 
-  def getAccountInfo: Future[String] = {
-    ws.url(s"${config.associatedPressAPIUrl}/account/plans")
-      .addHttpHeaders(("x-apikey", config.associatedPressAPIKey)).get().map { response =>
-      response.body
+  def feed: Future[FeedResponse] = get(config.associatedPressAPIDefaultFeedUrl, Seq(("x-apikey", config.associatedPressAPIKey))).map(res => parseFeedResponse(res.body))
+
+  private def parseFeedResponse(res: String): FeedResponse = {
+    Json.parse(res).validate[FeedResponse] match {
+      case feedResponse: JsSuccess[FeedResponse] => feedResponse.get
+      case error: JsError =>
+        // TODO: log and alert on parsing errors
+        throw Exception(error)
     }
   }
 }

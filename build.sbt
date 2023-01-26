@@ -1,4 +1,5 @@
 name := "grid-feeds"
+organization := "com.gu"
 scalaVersion := "2.13.10"
 
 routesGenerator := InjectedRoutesGenerator

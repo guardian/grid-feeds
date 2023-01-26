@@ -1,2 +1,3 @@
 # Management
 GET     /management/healthcheck             controllers.HealthcheckController.healthCheck
+GET     /feed                               controllers.FeedController.feed
