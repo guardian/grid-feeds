@@ -28,3 +28,30 @@ jobs:
       - name: check formatting
         run: |
           sbt scalafmtCheckAll
+      - uses: guardian/actions-riff-raff@v2
+        with:
+          projectName: editorial-tools::grid-feeds
+          configPath: cdk/cdk.out/riff-raff.yaml
+          contentDirectories: |
+            cdk.out:
+              - cdk/cdk.out
+            grid-feeds:
+              - target/grid-feeds.deb
+         app: grid-feeds
+         config: |
+          stacks:
+            - [media-service]
+          regions:
+            - eu-west-1
+          allowedStages:
+            - CODE
+            - PROD
+          deployments:
+            associated-press-feed:
+              type: autoscaling
+              parameters:
+                bucket: aws-some-bucket
+                cacheControl: private
+                publicReadAcl: false
+            
+              
