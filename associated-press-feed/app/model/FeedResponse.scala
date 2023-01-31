@@ -13,17 +13,19 @@ case class Main(href: String, contentid: String)
 
 object FeedResponse {
   private implicit val mainFormat: OFormat[Main] = Json.format[Main]
-  private implicit val renditionsFormat: OFormat[Renditions] = Json.format[Renditions]
+  private implicit val renditionsFormat: OFormat[Renditions] =
+    Json.format[Renditions]
   private implicit val altIdsFormat: OFormat[AltIds] = Json.format[AltIds]
   private implicit val itemFormat: OFormat[Item] = Json.format[Item]
   private implicit val itemMetaFormat: OFormat[ItemMeta] = Json.format[ItemMeta]
   private implicit val dataFormat: OFormat[Data] = Json.format[Data]
-  private implicit val feedResponseFormat: OFormat[FeedResponse] = Json.format[FeedResponse]
+  private implicit val feedResponseFormat: OFormat[FeedResponse] =
+    Json.format[FeedResponse]
 
   def parse(res: String): FeedResponse = {
     Json.parse(res).validate[FeedResponse] match {
       case feedResponse: JsSuccess[FeedResponse] => feedResponse.get
-      case error: JsError =>
+      case error: JsError                        =>
         // TODO: log and alert on parsing errors
         throw Exception(error)
     }
