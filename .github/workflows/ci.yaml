@@ -22,26 +22,6 @@ jobs:
         with:
           java-version: "11"
           distribution: "corretto"
-      - name: test
+      - name: deploy
         run: |
-          sbt -v test
-      - name: check formatting
-        run: |
-          sbt scalafmtCheckAll
-      - uses: guardian/actions-riff-raff@v2
-        with:
-          projectName: editorial-tools:grid-feeds
-        app: grid-feeds
-          config: |
-          stacks:
-            - [media-service]
-          regions:
-            - eu-west-1
-          allowedStages:
-            - CODE
-            - PROD
-          deployments:
-            associated-press-feed:
-              type: autoscaling
-            
-              
+          sbt clean scalafmtCheckAll compile test riffRaffUpload

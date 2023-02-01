@@ -2,17 +2,32 @@ import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 
 lazy val scalaVersionSpec = "2.13.10"
 
+val distributionSettings = Seq(
+  Debian / name := normalizedName.value,
+  Debian / serverLoading := Some(Systemd),
+  Debian / serviceAutostart := true,
+  maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>"
+)
+
+val riffraffSettings = Seq(
+  riffRaffPackageName := s"editorial-tools:${name.value}",
+  riffRaffManifestProjectName := riffRaffPackageName.value,
+  riffRaffPackageType := (Debian / packageBin).value,
+  riffRaffArtifactResources := Seq(
+    (associatedPressFeed / Debian / packageBin).value -> "associated-press-feed/associated-press-feed.deb",
+    baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
+  ),
+)
+
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press-feed"))
-    .enablePlugins(PlayScala, JDebPackaging, SystemdPlugin, RiffRaffArtifact)
+    .enablePlugins(PlayScala, JDebPackaging, SystemdPlugin)
     .settings(
       name := "associated-press-feed",
-      organization := "com.gu",
-      maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>",
       ThisBuild / scalaVersion := scalaVersionSpec,
       libraryDependencies ++= Seq(
         "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
-        "software.amazon.awssdk" % "s3" % "2.19.27",
+        "software.amazon.awssdk" % "s3" % "2.19.29",
         ws
       ),
       routesGenerator := InjectedRoutesGenerator,
@@ -20,18 +35,7 @@ lazy val associatedPressFeed =
     )
     .settings(distributionSettings)
 
-val distributionSettings = Seq(
-  Universal / name := normalizedName.value,
-  Debian / serverLoading := Some(Systemd),
-  riffRaffPackageName := s"editorial-tools:${name.value}",
-  riffRaffManifestProjectName := riffRaffPackageName.value,
-  riffRaffPackageType := (Debian / packageBin).value
-)
-
-
-
 lazy val root = (project in file("."))
   .aggregate(associatedPressFeed)
-  .settings(
-    run / aggregate := true
-  )
+  .enablePlugins(RiffRaffArtifact, JDebPackaging)
+  .settings(riffraffSettings)
