@@ -4,7 +4,7 @@ lazy val scalaVersionSpec = "2.13.10"
 
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press-feed"))
-    .enablePlugins(PlayScala, JDebPackaging, SystemdPlugin)
+    .enablePlugins(PlayScala, JDebPackaging, SystemdPlugin, RiffRaffArtifact)
     .settings(
       name := "associated-press-feed",
       organization := "com.gu",
@@ -23,7 +23,12 @@ lazy val associatedPressFeed =
 val distributionSettings = Seq(
   Universal / name := normalizedName.value,
   Debian / serverLoading := Some(Systemd),
+  riffRaffPackageName := s"editorial-tools:${name.value}",
+  riffRaffManifestProjectName := riffRaffPackageName.value,
+  riffRaffPackageType := (Debian / packageBin).value
 )
+
+
 
 lazy val root = (project in file("."))
   .aggregate(associatedPressFeed)
