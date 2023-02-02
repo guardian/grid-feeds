@@ -1,6 +1,6 @@
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.8.19")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.0")
-addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.9")
+addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.13")
 addSbtPlugin("com.gu" % "sbt-riffraff-artifact" % "1.1.18")
 
 
