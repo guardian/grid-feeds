@@ -6,15 +6,16 @@ val distributionSettings = Seq(
   Debian / name := normalizedName.value,
   Debian / serverLoading := Some(Systemd),
   Debian / serviceAutostart := true,
+  debianPackageDependencies := Seq("openjdk-8-jre-headless"),
   maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>"
 )
 
 val riffraffSettings = Seq(
   riffRaffPackageName := s"editorial-tools:${name.value}",
   riffRaffManifestProjectName := riffRaffPackageName.value,
-  riffRaffPackageType := (Debian / packageBin).value,
   riffRaffArtifactResources := Seq(
-    (associatedPressFeed / Debian / packageBin).value -> "associated-press-feed/associated-press-feed.deb",
+    (associatedPressFeed / Debian / packageBin).value -> s"${(associatedPressFeed / name).value}/${(associatedPressFeed / name).value}.deb",
+    baseDirectory.value / "associated-press-feed/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> "associated-press-feed/cloudformation/AssociatedPressFeed-CODE.template.json",
     baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
   ),
 )
@@ -35,7 +36,7 @@ lazy val associatedPressFeed =
     )
     .settings(distributionSettings)
 
-lazy val root = (project in file("."))
+lazy val root = Project("grid-feeds", file("."))
   .aggregate(associatedPressFeed)
-  .enablePlugins(RiffRaffArtifact, JDebPackaging)
+  .enablePlugins(RiffRaffArtifact)
   .settings(riffraffSettings)
