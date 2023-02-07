@@ -1,3 +1,2 @@
 # Management
 GET     /management/healthcheck             controllers.HealthcheckController.healthCheck
-GET     /start                               controllers.FeedController.start
