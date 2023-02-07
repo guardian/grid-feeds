@@ -8,7 +8,8 @@ lazy val associatedPressFeed = Project("associated-press-feed", file("associated
     ThisBuild / scalaVersion := scalaVersionSpec,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
-      "software.amazon.awssdk" % "s3" % "2.19.27",
+      "software.amazon.awssdk" % "s3" % "2.19.32",
+      "com.gu" %% "simple-configuration-ssm" % "1.5.7",
       ws
     ),
     routesGenerator := InjectedRoutesGenerator,
