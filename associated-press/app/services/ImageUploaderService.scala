@@ -19,10 +19,12 @@ class ImageUploaderService(config: AppConfig, implicit val executionContext: Exe
           .map(response => {
             if (response.contentType == "image/jpeg") {
               if (config.s3UploadEnabled) {
-                AWS.s3Client.putObject(PutObjectRequest.builder()
-                  .bucket(config.s3UploadBucketName)
-                  .key(s"ap/${entry.item.altids.friendlykey}.jpg")
-                  .build(),RequestBody.fromBytes(response.bodyAsBytes.toArray))
+                config.s3UploadBucketName.map(bucket => {
+                  AWS.s3Client.putObject(PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(s"ap/${entry.item.altids.friendlykey}.jpg")
+                    .build(), RequestBody.fromBytes(response.bodyAsBytes.toArray))
+                })
               } else {
                 logger.info(s"Would have uploaded image id ${entry.item.altids.friendlykey} with ${response.bodyAsBytes.size} bytes")
               }
