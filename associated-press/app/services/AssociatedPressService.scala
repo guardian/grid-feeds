@@ -6,6 +6,7 @@ import client.HttpClient.get
 import config.AppConfig
 import model.FeedResponse
 import play.api.Logging
+import play.api.libs.ws.StandaloneWSResponse
 
 import scala.concurrent.ExecutionContext
 
@@ -29,15 +30,23 @@ class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorS
   val imageUploaderServiceActor: ActorRef = system.actorOf(Props(new ImageUploaderService(config, executionContext)), name = "imageUploaderServiceActor")
 
   override def receive: Receive = {
-    case nextPage:String =>
-      logger.info(s"Calling: $nextPage")
-      get(nextPage, Seq(("x-apikey", config.associatedPressAPIKey)))
-        .map(response => {
-          val feedResponse: FeedResponse = FeedResponse.parse(response.body)
-          logger.info(s"Received response with ${feedResponse.data.items.length} items")
-          imageUploaderServiceActor ! feedResponse.data.items
-          // TODO write next page value to DynamoDB
-          self ! feedResponse.data.next_page
-        })
+    case page:String =>
+      logger.info(s"Calling: $page")
+      get(page, Seq(("x-apikey", config.associatedPressAPIKey))).map(handleResponse)
+
+    def handleResponse(response: StandaloneWSResponse): Unit = {
+      if(response.status == 200) {
+        val feedResponse: FeedResponse = FeedResponse.parse(response.body)
+        logger.info(s"Received response with ${feedResponse.data.items.length} items")
+        imageUploaderServiceActor ! feedResponse.data.items
+        // TODO write next page value to DynamoDB
+        self ! feedResponse.data.next_page
+      } else {
+        logger.error(s"Received ${response.contentType} response from AP API: ${response.body}")
+        // if we receive a non-200 response from the API wait 5 seconds before retrying
+        Thread.sleep(5000L)
+        self ! page
+      }
+    }
   }
 }
