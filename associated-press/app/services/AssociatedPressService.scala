@@ -36,17 +36,24 @@ class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorS
 
     def handleResponse(response: StandaloneWSResponse): Unit = {
       if(response.status == 200) {
-        val feedResponse: FeedResponse = FeedResponse.parse(response.body)
-        logger.info(s"Received response with ${feedResponse.data.items.length} items")
-        imageUploaderServiceActor ! feedResponse.data.items
-        // TODO write next page value to DynamoDB
-        self ! feedResponse.data.next_page
+        FeedResponse.parse(response.body).fold(resendRequest())(
+          response => {
+            logger.info(s"Received response with ${response.items.length} items")
+            imageUploaderServiceActor ! response.items
+            // TODO write next page value to DynamoDB
+            self ! response.nextPage
+          }
+        )
       } else {
         logger.error(s"Received ${response.contentType} response from AP API: ${response.body}")
-        // if we receive a non-200 response from the API wait 5 seconds before retrying
-        Thread.sleep(5000L)
-        self ! page
+        resendRequest()
       }
+    }
+
+    def resendRequest(): Unit = {
+      // if there is an error, we wait 5 seconds and try fetching the page again
+      Thread.sleep(5000L)
+      self ! page
     }
   }
 }
