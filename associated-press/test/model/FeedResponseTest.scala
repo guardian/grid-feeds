@@ -78,4 +78,27 @@ class FeedResponseTest extends AnyFunSuite with Matchers {
     items.length should be(1)
     items.head.downloadLink should be(downloadLink)
   }
+
+  test("should filter images without a main image") {
+    val input =
+      s"""{
+        "data": {
+          "next_page": "$nextPage",
+          "items": [
+            {
+              "item": {
+                "type": "picture",
+                "altids": {
+                  "itemid": "12345"
+                },
+                "renditions": {
+                  "caption_nitf": {}
+                }
+              }
+            }
+          ]
+        }
+      }""".stripMargin
+    FeedResponse.parse(input).get.items.length should be(0)
+  }
 }

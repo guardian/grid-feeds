@@ -26,7 +26,8 @@ object FeedResponse extends Logging {
     jsValue match {
       case jsArray: JsArray =>
         jsArray.value.toArray
-          .filter(item => (item \ "item" \ "type").as[String] == "picture")
+          // some pictures do not have a main (full resolution) image defined, so we filter these items from the results
+          .filter(item => (item \ "item" \ "type").as[String] == "picture" && (item \ "item" \ "renditions" \ "main").toOption.isDefined)
           .map(item => ImageItem(
             contentId = (item \ "item" \ "altids" \ "itemid").as[String],
             fileName = (item \ "item" \ "renditions" \ "main" \ "originalfilename").as[String],
