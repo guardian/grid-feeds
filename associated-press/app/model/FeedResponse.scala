@@ -9,8 +9,6 @@ case class FeedResponse(nextPage: String, items: Array[ImageItem])
 case class ImageItem(contentId: String, fileName: String, downloadLink: String)
 
 object FeedResponse extends Logging {
-  private implicit val itemFormat: OFormat[ImageItem] = Json.format[ImageItem]
-
   def parse(res: String): Option[FeedResponse] = Try {
     val json = Json.parse(res)
     FeedResponse(

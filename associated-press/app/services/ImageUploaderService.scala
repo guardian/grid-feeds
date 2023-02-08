@@ -18,7 +18,7 @@ class ImageUploaderService(config: AppConfig, implicit val executionContext: Exe
         get(item.downloadLink, headers = Seq(("x-apikey", config.associatedPressAPIKey)))
           .map(response => {
             if (response.contentType == "image/jpeg") uploadToS3(item, response.bodyAsBytes.toArray)
-            else logger.warn(s"")
+            else logger.warn(s"Received response of type ${response.contentType}, content not processed")
           })
       )
 
