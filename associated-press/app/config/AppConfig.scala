@@ -9,7 +9,5 @@ class AppConfig(playConfig: Configuration) {
   val associatedPressAPIKey: String = config.getString("associatedPress.apiKey")
 
   val s3UploadEnabled: Boolean = config.getBoolean("aws.s3.uploadEnabled")
-  val s3UploadBucketName: String =
-    if(s3UploadEnabled) config.getString("aws.s3.uploadBucketName")
-    else throw UnexpectedException(Some("No configuration setting found for key 'aws.s3.uploadBucketName'"))
+  val s3UploadBucketName: String = if(s3UploadEnabled) config.getString("aws.s3.uploadBucketName") else ""
 }
