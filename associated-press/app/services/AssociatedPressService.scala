@@ -25,15 +25,26 @@ class AssociatedPressService(
     associatedPressServiceActor ! getFirstPageUrl
   }
 
-  // TODO retrieve this from DynamoDB and fallback to config
-  private def getFirstPageUrl: String = config.associatedPressAPIDefaultFeedUrl
+  private def getFirstPageUrl: String = {
+    readFromDynamoDB(config.dynamoDBNextPageTable, "key", "nextPage") match {
+      case Success(values) =>
+        val nextPage = values.head.s()
+        if(nextPage.isEmpty) config.associatedPressAPIDefaultFeedUrl
+        else nextPage
+      case Failure(err) =>
+        logger.error("Failed to retrieve first page from dynamoDB, using default page", err)
+        config.associatedPressAPIDefaultFeedUrl
+    }
+  }
 }
 
 class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorSystem, implicit val executionContext: ExecutionContext) extends Actor with Logging {
   val imageUploaderServiceActor: ActorRef = system.actorOf(Props(new ImageUploaderService(config, executionContext)), name = "imageUploaderServiceActor")
 
   override def receive: Receive = {
-    case page:String => get(page, Seq(("x-apikey", config.associatedPressAPIKey))).map(handleResponse)
+    case page:String =>
+      logger.info(s"Calling next page: $page")
+      get(page, Seq(("x-apikey", config.associatedPressAPIKey))).map(handleResponse)
 
     def handleResponse(response: StandaloneWSResponse): Unit = {
       if(response.status == 200) {

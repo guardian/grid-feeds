@@ -3,13 +3,13 @@ package config
 import software.amazon.awssdk.auth.credentials.{AwsCredentialsProviderChain, InstanceProfileCredentialsProvider, ProfileCredentialsProvider}
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
 import software.amazon.awssdk.core.retry.RetryPolicy
-import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.{AttributeValue, AttributeValueUpdate, UpdateItemRequest, UpdateItemResponse}
+import software.amazon.awssdk.services.dynamodb.model._
+import software.amazon.awssdk.services.s3.S3Client
 
-import scala.jdk.CollectionConverters._
 import java.time.Duration
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 object AWS {
@@ -44,6 +44,17 @@ object AWS {
               .value(AttributeValue.builder().s(content).build())
               .build()).asJava
           ).build())
+    }
+  }
+
+  def readFromDynamoDB(table: String, keyName: String, keyValue: String): Try[Iterable[AttributeValue]] = {
+    Try {
+      dynamoDbClient.getItem(
+        GetItemRequest.builder()
+          .tableName(table)
+          .key(Map(keyName -> AttributeValue.builder().s(keyValue).build()).asJava)
+          .build()
+      ).item().values().asScala
     }
   }
 }
