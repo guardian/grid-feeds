@@ -30,9 +30,7 @@ class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorS
   val imageUploaderServiceActor: ActorRef = system.actorOf(Props(new ImageUploaderService(config, executionContext)), name = "imageUploaderServiceActor")
 
   override def receive: Receive = {
-    case page:String =>
-      logger.info(s"Calling: $page")
-      get(page, Seq(("x-apikey", config.associatedPressAPIKey))).map(handleResponse)
+    case page:String => get(page, Seq(("x-apikey", config.associatedPressAPIKey))).map(handleResponse)
 
     def handleResponse(response: StandaloneWSResponse): Unit = {
       if(response.status == 200) {

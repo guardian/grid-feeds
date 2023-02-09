@@ -24,14 +24,12 @@ class ImageUploaderService(config: AppConfig, implicit val executionContext: Exe
 
     def uploadToS3(item: ImageItem, bytes: Array[Byte]):Unit = {
       if (config.s3UploadEnabled) {
-        config.s3UploadBucketName.map(bucket => {
           AWS.s3Client.putObject(PutObjectRequest.builder()
-            .bucket(bucket)
+            .bucket(config.s3UploadBucketName)
             .key(s"ap/${item.fileName}")
             .build(),
             RequestBody.fromBytes(bytes)
           )
-        })
       } else {
         logger.info(s"S3 upload disabled: would have uploaded image ${item.contentId}")
       }
