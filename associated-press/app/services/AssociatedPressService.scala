@@ -3,12 +3,15 @@ package services
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import client.HttpClient.get
+import config.AWS._
 import config.AppConfig
 import model.FeedResponse
 import play.api.Logging
 import play.api.libs.ws.StandaloneWSResponse
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success, Try}
 
 class AssociatedPressService(
   config: AppConfig,
@@ -38,8 +41,14 @@ class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorS
           response => {
             logger.info(s"Received response with ${response.items.length} items")
             imageUploaderServiceActor ! response.items
-            // TODO write next page value to DynamoDB
-            self ! response.nextPage
+            writeNextPageToDynamoDB(response.nextPage) match {
+              case Success(_) =>
+                self ! response.nextPage
+              case Failure(error) =>
+                logger.error("Failed to update next page in DynamoDB, retrying...", error)
+                Thread.sleep(5000L)
+                writeNextPageToDynamoDB(response.nextPage)
+            }
           }
         )
       } else {
@@ -52,6 +61,15 @@ class AssociatedPressServiceActor(config: AppConfig, implicit val system: ActorS
       // if there is an error, we wait 5 seconds and try fetching the page again
       Thread.sleep(5000L)
       self ! page
+    }
+
+    def writeNextPageToDynamoDB(nextPage: String): Try[UpdateItemResponse] = {
+      writeToDynamoDB(
+        table = config.dynamoDBNextPageTable,
+        keyName = "key",
+        keyValue = "nextPage",
+        content = nextPage
+      )
     }
   }
 }

@@ -10,4 +10,6 @@ class AppConfig(playConfig: Configuration) {
 
   val s3UploadEnabled: Boolean = config.getBoolean("aws.s3.uploadEnabled")
   val s3UploadBucketName: String = if(s3UploadEnabled) config.getString("aws.s3.uploadBucketName") else ""
+
+  val dynamoDBNextPageTable: String = config.getString("aws.dynamodb.nextPageTable")
 }

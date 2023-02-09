@@ -9,7 +9,8 @@ lazy val associatedPressFeed = Project("associated-press-feed", file("associated
     libraryDependencies ++= Seq(
       ws,
       "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
-      "software.amazon.awssdk" % "s3" % "2.19.32",
+      "software.amazon.awssdk" % "s3" % "2.20.0",
+      "software.amazon.awssdk" % "dynamodb" % "2.20.0",
       "com.gu" %% "simple-configuration-ssm" % "1.5.7",
       "org.scalatest" %% "scalatest" % "3.2.15" % "test",
       "org.scalatestplus" %% "mockito-4-6" % "3.2.15.0" % "test",
