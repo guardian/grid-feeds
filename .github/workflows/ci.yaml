@@ -30,11 +30,11 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: AP Feed - Build GuCDK
-        working-directory: 'associated-press-feed/cdk'
+        working-directory: 'associated-press/cdk'
         run: |
           npm install
           npm run test
           npm run synth
       - name: AP feed - RiffRaff Deploy
         run: |
-          sbt clean scalafmtCheckAll compile riffRaffUpload
+          sbt clean scalafmtCheckAll compile test riffRaffUpload
