@@ -1,31 +1,42 @@
 package model
 
-import play.api.libs.json.JsResult.Exception
-import play.api.libs.json.{JsError, JsSuccess, Json, OFormat}
+import play.api.Logging
+import play.api.libs.json.{JsArray, JsValue, Json, OFormat}
 
-case class FeedResponse(data: Data)
-case class Data(next_page: String, items: Array[ItemMeta])
-case class ItemMeta(item: Item)
-case class Item(uri: String, altids: AltIds, renditions: Renditions)
-case class AltIds(friendlykey: String)
-case class Renditions(main: Main)
-case class Main(href: String, contentid: String)
+import scala.util.{Failure, Success, Try}
 
-object FeedResponse {
-  private implicit val mainFormat: OFormat[Main] = Json.format[Main]
-  private implicit val renditionsFormat: OFormat[Renditions] = Json.format[Renditions]
-  private implicit val altIdsFormat: OFormat[AltIds] = Json.format[AltIds]
-  private implicit val itemFormat: OFormat[Item] = Json.format[Item]
-  private implicit val itemMetaFormat: OFormat[ItemMeta] = Json.format[ItemMeta]
-  private implicit val dataFormat: OFormat[Data] = Json.format[Data]
-  private implicit val feedResponseFormat: OFormat[FeedResponse] = Json.format[FeedResponse]
+case class FeedResponse(nextPage: String, items: Array[ImageItem])
+case class ImageItem(contentId: String, fileName: String, downloadLink: String)
 
-  def parse(res: String): FeedResponse = {
-    Json.parse(res).validate[FeedResponse] match {
-      case feedResponse: JsSuccess[FeedResponse] => feedResponse.get
-      case error: JsError =>
-        // TODO: log and alert on parsing errors
-        throw Exception(error)
+object FeedResponse extends Logging {
+  def parse(res: String): Option[FeedResponse] = Try {
+    val json = Json.parse(res)
+    FeedResponse(
+      nextPage = (json \ "data" \ "next_page").as[String],
+      items = (json \ "data" \ "items").toOption.map(getItemArrayFromJsValue).getOrElse(Array.empty)
+    )
+  } match {
+    case Success(response) => Some(response)
+    case Failure(error) =>
+      logger.error(s"Could not parse AP API response json", error)
+      None
+  }
+
+  private def getItemArrayFromJsValue(jsValue: JsValue): Array[ImageItem] = {
+    jsValue match {
+      case jsArray: JsArray =>
+        jsArray.value.toArray
+          .filter(item =>
+            (item \ "item" \ "type").as[String] == "picture" &&
+            (item \ "item" \ "altids" \ "itemid").toOption.isDefined &&
+            (item \ "item" \ "renditions" \ "main" \ "originalfilename").toOption.isDefined &&
+            (item \ "item" \ "renditions" \ "main" \ "href").toOption.isDefined)
+          .map(item => ImageItem(
+            contentId = (item \ "item" \ "altids" \ "itemid").as[String],
+            fileName = (item \ "item" \ "renditions" \ "main" \ "originalfilename").as[String],
+            downloadLink = (item \ "item" \ "renditions" \ "main" \ "href").as[String]
+          ))
+      case _ => Array.empty
     }
   }
 }

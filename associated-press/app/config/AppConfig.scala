@@ -1,6 +1,6 @@
 package config
 
-import play.api.Configuration
+import play.api.{Configuration, UnexpectedException}
 
 class AppConfig(playConfig: Configuration) {
   private val config = playConfig.underlying
@@ -9,5 +9,5 @@ class AppConfig(playConfig: Configuration) {
   val associatedPressAPIKey: String = config.getString("associatedPress.apiKey")
 
   val s3UploadEnabled: Boolean = config.getBoolean("aws.s3.uploadEnabled")
-  val s3UploadBucketName: Option[String] = if(s3UploadEnabled) Option(config.getString("aws.s3.uploadBucketName")) else None
+  val s3UploadBucketName: String = if(s3UploadEnabled) config.getString("aws.s3.uploadBucketName") else ""
 }
