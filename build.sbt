@@ -4,11 +4,14 @@ organization := "com.gu"
 lazy val scalaVersionSpec = "2.13.10"
 
 val distributionSettings = Seq(
+  maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>",
   Debian / name := normalizedName.value,
   Debian / serverLoading := Some(Systemd),
   Debian / serviceAutostart := true,
   debianPackageDependencies := Seq("openjdk-8-jre-headless"),
-  maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>"
+  Universal / javaOptions ++= Seq(
+    "-Dpidfile.path=/dev/null"
+  )
 )
 
 val riffraffSettings = Seq(
@@ -16,7 +19,7 @@ val riffraffSettings = Seq(
   riffRaffManifestProjectName := riffRaffPackageName.value,
   riffRaffArtifactResources := Seq(
     (associatedPressFeed / Debian / packageBin).value -> s"${(associatedPressFeed / name).value}/${(associatedPressFeed / name).value}.deb",
-    baseDirectory.value / "associated-press-feed/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> "associated-press-feed/cloudformation/AssociatedPressFeed-CODE.template.json",
+    baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-CODE.template.json",
     baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
   ),
 )

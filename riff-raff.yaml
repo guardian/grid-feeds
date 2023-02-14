@@ -1,17 +1,23 @@
 stacks: [media-service]
 regions: [eu-west-1]
 deployments:
-  ap-feed-cloudformation:
+  associated-press-feed-cloudformation:
     type: cloud-formation
+    app: associated-press-feed
+    contentDirectory: associated-press-feed
     parameters:
       templateStagePaths:
-        CODE: associated-press-feed/cloudformation/AssociatedPressFeed-CODE.template.json
+        CODE: cloudformation/AssociatedPressFeed-CODE.template.json
       amiTags:
         BuiltBy: amigo
         AmigoStage: PROD
-        Recipe: editorial-tools-focal-java8
+        Recipe: editorial-tools-focal-java8-ARM
       amiParameter: AMIAssociatedpressfeed
       prependStackToCloudFormationStackName: false
-  ap-feed-auto-scaling:
+  associated-press-feed-autoscaling:
     type: autoscaling
-    dependencies: [ ap-feed-cloudformation ]
+    app: associated-press-feed
+    contentDirectory: associated-press-feed
+    parameters:
+      prefixApp: true
+    dependencies: [ associated-press-feed-cloudformation ]
