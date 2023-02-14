@@ -1,6 +1,6 @@
 package config
 
-import play.api.Configuration
+import play.api.{Configuration, UnexpectedException}
 
 class AppConfig(playConfig: Configuration) {
   private val config = playConfig.underlying
@@ -9,10 +9,7 @@ class AppConfig(playConfig: Configuration) {
     config.getString("associatedPress.apiDefaultFeedUrl")
   val associatedPressAPIKey: String = config.getString("associatedPress.apiKey")
 
-  val s3UploadEnabled: Boolean =
-    if (config.hasPath("aws.s3UploadEnabled"))
-      config.getBoolean("aws.s3UploadEnabled")
-    else false
+  val s3UploadEnabled: Boolean = config.getBoolean("aws.s3.uploadEnabled")
   val s3UploadBucketName: String =
-    if (s3UploadEnabled) config.getString("aws.s3UploadBucketName") else ""
+    if (s3UploadEnabled) config.getString("aws.s3.uploadBucketName") else ""
 }

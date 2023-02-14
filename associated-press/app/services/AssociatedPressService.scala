@@ -6,6 +6,7 @@ import client.HttpClient.get
 import config.AppConfig
 import model.FeedResponse
 import play.api.Logging
+import play.api.libs.ws.StandaloneWSResponse
 
 import scala.concurrent.ExecutionContext
 
@@ -39,17 +40,33 @@ class AssociatedPressServiceActor(
     name = "imageUploaderServiceActor"
   )
 
-  override def receive: Receive = { case nextPage: String =>
-    logger.info(s"Calling: $nextPage")
-    get(nextPage, Seq(("x-apikey", config.associatedPressAPIKey)))
-      .map(response => {
-        val feedResponse: FeedResponse = FeedResponse.parse(response.body)
-        logger.info(
-          s"Received response with ${feedResponse.data.items.length} items"
+  override def receive: Receive = { case page: String =>
+    get(page, Seq(("x-apikey", config.associatedPressAPIKey)))
+      .map(handleResponse)
+
+    def handleResponse(response: StandaloneWSResponse): Unit = {
+      if (response.status == 200) {
+        FeedResponse
+          .parse(response.body)
+          .fold(resendRequest())(response => {
+            logger
+              .info(s"Received response with ${response.items.length} items")
+            imageUploaderServiceActor ! response.items
+            // TODO write next page value to DynamoDB
+            self ! response.nextPage
+          })
+      } else {
+        logger.error(
+          s"Received ${response.contentType} response from AP API: ${response.body}"
         )
-        imageUploaderServiceActor ! feedResponse.data.items
-        // TODO write next page value to DynamoDB
-        self ! feedResponse.data.next_page
-      })
+        resendRequest()
+      }
+    }
+
+    def resendRequest(): Unit = {
+      // if there is an error, we wait 5 seconds and try fetching the page again
+      Thread.sleep(5000L)
+      self ! page
+    }
   }
 }
