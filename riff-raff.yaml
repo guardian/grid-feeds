@@ -11,7 +11,7 @@ deployments:
       amiTags:
         BuiltBy: amigo
         AmigoStage: PROD
-        Recipe: editorial-tools-focal-java8-ARM
+        Recipe: editorial-tools-focal-java8-WITH-cdk-base
       amiParameter: AMIAssociatedpressfeed
       prependStackToCloudFormationStackName: false
   associated-press-feed-autoscaling:
