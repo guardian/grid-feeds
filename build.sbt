@@ -20,6 +20,7 @@ val riffraffSettings = Seq(
   riffRaffArtifactResources := Seq(
     (associatedPressFeed / Debian / packageBin).value -> s"${(associatedPressFeed / name).value}/${(associatedPressFeed / name).value}.deb",
     baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-CODE.template.json",
+    baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-PROD.template.json",
     baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
   ),
 )

@@ -17,8 +17,8 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       "GuParameterStoreReadPolicy",
       "GuAmiParameter",
       "GuHttpsEgressSecurityGroup",
-      "GuAutoScalingGroup",
       "GuWazuhAccess",
+      "GuAutoScalingGroup",
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
       "GuHttpsApplicationListener",
@@ -75,8 +75,16 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       "Properties": {
         "HealthCheckGracePeriod": 120,
         "HealthCheckType": "ELB",
-        "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupAssociatedpressfeedLaunchConfig5F3F3B84",
+        "LaunchTemplate": {
+          "LaunchTemplateId": {
+            "Ref": "mediaserviceTESTassociatedpressfeedA84215E5",
+          },
+          "Version": {
+            "Fn::GetAtt": [
+              "mediaserviceTESTassociatedpressfeedA84215E5",
+              "LatestVersionNumber",
+            ],
+          },
         },
         "MaxSize": "2",
         "MinSize": "1",
@@ -104,11 +112,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
             },
           },
           {
-            "Key": "Name",
-            "PropagateAtLaunch": true,
-            "Value": "AssociatedPressFeed/AutoScalingGroupAssociatedpressfeed",
-          },
-          {
             "Key": "Stack",
             "PropagateAtLaunch": true,
             "Value": "media-service",
@@ -129,65 +132,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         },
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
-    },
-    "AutoScalingGroupAssociatedpressfeedInstanceProfileD0C2813A": {
-      "Properties": {
-        "Roles": [
-          {
-            "Ref": "InstanceRoleAssociatedpressfeed489B555B",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
-    },
-    "AutoScalingGroupAssociatedpressfeedLaunchConfig5F3F3B84": {
-      "DependsOn": [
-        "InstanceRoleAssociatedpressfeed489B555B",
-      ],
-      "Properties": {
-        "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupAssociatedpressfeedInstanceProfileD0C2813A",
-        },
-        "ImageId": {
-          "Ref": "AMIAssociatedpressfeed",
-        },
-        "InstanceType": "t4g.nano",
-        "MetadataOptions": {
-          "HttpTokens": "required",
-        },
-        "SecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
-              "GroupId",
-            ],
-          },
-          {
-            "Fn::GetAtt": [
-              "WazuhSecurityGroup",
-              "GroupId",
-            ],
-          },
-        ],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash
-mkdir -p $(dirname '/associated-press-feed/associated-press-feed.deb')
-aws s3 cp 's3://",
-                {
-                  "Ref": "DistributionBucketName",
-                },
-                "/media-service/TEST/associated-press-feed/associated-press-feed.deb' '/associated-press-feed/associated-press-feed.deb'
-dpkg -i /associated-press-feed/associated-press-feed.deb",
-              ],
-            ],
-          },
-        },
-      },
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
     "DescribeEC2PolicyFF5F9295": {
       "Properties": {
@@ -583,6 +527,27 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
+    "InternalIngressSecurityGroupAssociatedpressfeedtoAssociatedPressFeedWazuhSecurityGroup29A5C4509000E99D0AFA": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "FromPort": 9000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "InternalIngressSecurityGroupAssociatedpressfeed0E002BC2",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 9000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
     "ListenerAssociatedpressfeed462D6CC6": {
       "Properties": {
         "DefaultActions": [
@@ -690,6 +655,27 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
             "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
+            "GroupId",
+          ],
+        },
+        "FromPort": 9000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 9000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "LoadBalancerAssociatedpressfeedSecurityGrouptoAssociatedPressFeedWazuhSecurityGroup29A5C4509000ABA6C612": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
             "GroupId",
           ],
         },
@@ -956,6 +942,190 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
+    },
+    "WazuhSecurityGroupfromAssociatedPressFeedInternalIngressSecurityGroupAssociatedpressfeedBABB87199000719E200F": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 9000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "InternalIngressSecurityGroupAssociatedpressfeed0E002BC2",
+            "GroupId",
+          ],
+        },
+        "ToPort": 9000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "WazuhSecurityGroupfromAssociatedPressFeedLoadBalancerAssociatedpressfeedSecurityGroup1EE83363900077A500EB": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 9000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WazuhSecurityGroup",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
+            "GroupId",
+          ],
+        },
+        "ToPort": 9000,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "mediaserviceTESTassociatedpressfeedA84215E5": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "IamInstanceProfile": {
+            "Arn": {
+              "Fn::GetAtt": [
+                "mediaserviceTESTassociatedpressfeedProfile780A27D4",
+                "Arn",
+              ],
+            },
+          },
+          "ImageId": {
+            "Ref": "AMIAssociatedpressfeed",
+          },
+          "InstanceType": "t4g.micro",
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
+                "GroupId",
+              ],
+            },
+            {
+              "Fn::GetAtt": [
+                "WazuhSecurityGroup",
+                "GroupId",
+              ],
+            },
+          ],
+          "TagSpecifications": [
+            {
+              "ResourceType": "instance",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/grid-feeds",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "AssociatedPressFeed/media-service-TEST-associated-press-feed",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "media-service",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+            {
+              "ResourceType": "volume",
+              "Tags": [
+                {
+                  "Key": "gu:cdk:version",
+                  "Value": "TEST",
+                },
+                {
+                  "Key": "gu:repo",
+                  "Value": "guardian/grid-feeds",
+                },
+                {
+                  "Key": "Name",
+                  "Value": "AssociatedPressFeed/media-service-TEST-associated-press-feed",
+                },
+                {
+                  "Key": "Stack",
+                  "Value": "media-service",
+                },
+                {
+                  "Key": "Stage",
+                  "Value": "TEST",
+                },
+              ],
+            },
+          ],
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "#!/bin/bash
+mkdir -p $(dirname '/associated-press-feed/associated-press-feed.deb')
+aws s3 cp 's3://",
+                  {
+                    "Ref": "DistributionBucketName",
+                  },
+                  "/media-service/TEST/associated-press-feed/associated-press-feed.deb' '/associated-press-feed/associated-press-feed.deb'
+dpkg -i /associated-press-feed/associated-press-feed.deb",
+                ],
+              ],
+            },
+          },
+        },
+        "TagSpecifications": [
+          {
+            "ResourceType": "launch-template",
+            "Tags": [
+              {
+                "Key": "gu:cdk:version",
+                "Value": "TEST",
+              },
+              {
+                "Key": "gu:repo",
+                "Value": "guardian/grid-feeds",
+              },
+              {
+                "Key": "Name",
+                "Value": "AssociatedPressFeed/media-service-TEST-associated-press-feed",
+              },
+              {
+                "Key": "Stack",
+                "Value": "media-service",
+              },
+              {
+                "Key": "Stage",
+                "Value": "TEST",
+              },
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "mediaserviceTESTassociatedpressfeedProfile780A27D4": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "InstanceRoleAssociatedpressfeed489B555B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
     },
   },
 }

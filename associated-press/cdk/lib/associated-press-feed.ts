@@ -4,17 +4,12 @@ import type { App } from 'aws-cdk-lib';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { GuPlayWorkerApp } from "@guardian/cdk";
 
-interface AssociatedPressFeedProps extends GuStackProps {
-	instanceSize: InstanceSize
-	domainName: string
-}
-
 export class AssociatedPressFeed extends GuStack {
-	constructor(scope: App, id: string, props: AssociatedPressFeedProps) {
+	constructor(scope: App, id: string, props: GuStackProps) {
 		super(scope, id, props);
 		new GuPlayWorkerApp(this, {
 			app: 'associated-press-feed',
-			instanceType: InstanceType.of(InstanceClass.T4G, props.instanceSize),
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
 			monitoringConfiguration: {
 				snsTopicName: "pagerduty-notification-topic",
 				http5xxAlarm: {

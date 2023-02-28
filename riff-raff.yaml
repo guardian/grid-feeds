@@ -8,10 +8,11 @@ deployments:
     parameters:
       templateStagePaths:
         CODE: cloudformation/AssociatedPressFeed-CODE.template.json
+        PROD: cloudformation/AssociatedPressFeed-PROD.template.json
       amiTags:
         BuiltBy: amigo
         AmigoStage: PROD
-        Recipe: editorial-tools-focal-java8-WITH-cdk-base
+        Recipe: editorial-tools-focal-java8-ARM-WITH-cdk-base
       amiParameter: AMIAssociatedpressfeed
       prependStackToCloudFormationStackName: false
   associated-press-feed-autoscaling:
