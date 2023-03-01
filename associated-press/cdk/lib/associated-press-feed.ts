@@ -46,6 +46,9 @@ export class AssociatedPressFeed extends GuStack {
 			roleConfiguration: {
 				additionalPolicies: [instancePolicy],
 			},
+			applicationLogging: {
+				enabled: true,
+			}
 		});
 	}
 }

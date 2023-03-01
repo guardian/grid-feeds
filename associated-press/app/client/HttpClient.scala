@@ -5,6 +5,7 @@ import play.api.libs.ws.StandaloneWSResponse
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 
 object HttpClient {
   implicit val system: ActorSystem = ActorSystem()

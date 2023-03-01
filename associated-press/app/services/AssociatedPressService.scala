@@ -43,6 +43,10 @@ class AssociatedPressServiceActor(
   override def receive: Receive = { case page: String =>
     get(page, Seq(("x-apikey", config.associatedPressAPIKey)))
       .map(handleResponse)
+      .recover(e => {
+        logger.error(s"Request failed $page", e)
+        resendRequest()
+      })
 
     def handleResponse(response: StandaloneWSResponse): Unit = {
       if (response.status == 200) {
@@ -57,7 +61,7 @@ class AssociatedPressServiceActor(
           })
       } else {
         logger.error(
-          s"Received ${response.contentType} response from AP API: ${response.body}"
+          s"Received ${response.status} response: ${response.body}"
         )
         resendRequest()
       }
@@ -66,6 +70,7 @@ class AssociatedPressServiceActor(
     def resendRequest(): Unit = {
       // if there is an error, we wait 5 seconds and try fetching the page again
       Thread.sleep(5000L)
+      logger.error(s"Resending request $page")
       self ! page
     }
   }
