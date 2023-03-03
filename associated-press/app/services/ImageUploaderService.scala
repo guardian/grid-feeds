@@ -7,12 +7,8 @@ import model.ImageItem
 import play.api.Logging
 import play.api.libs.ws.StandaloneWSResponse
 import software.amazon.awssdk.core.sync.RequestBody
-import software.amazon.awssdk.services.s3.model.{
-  PutObjectRequest,
-  PutObjectResponse
-}
+import software.amazon.awssdk.services.s3.model.PutObjectRequest
 
-import scala.collection.parallel.CollectionConverters._
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
@@ -22,7 +18,7 @@ class ImageUploaderService(
 ) extends Actor
     with Logging {
   override def receive: Receive = { case items: Array[ImageItem] =>
-    items.par.foreach(item => {
+    items.foreach(item => {
       get(item.downloadLink, Seq(("x-apikey", config.associatedPressAPIKey)))
         .map(res => handleResponse(item, res))
         .recover(e => {

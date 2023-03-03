@@ -1048,7 +1048,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
           "ImageId": {
             "Ref": "AMIAssociatedpressfeed",
           },
-          "InstanceType": "t4g.micro",
+          "InstanceType": "t4g.small",
           "MetadataOptions": {
             "HttpTokens": "required",
           },

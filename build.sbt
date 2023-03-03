@@ -10,7 +10,10 @@ val distributionSettings = Seq(
   Debian / serviceAutostart := true,
   debianPackageDependencies := Seq("openjdk-8-jre-headless"),
   Universal / javaOptions ++= Seq(
-    "-Dpidfile.path=/dev/null"
+    "-Dpidfile.path=/dev/null",
+    "-J-XX:+HeapDumpOnOutOfMemoryError",
+    "-XX:InitialHeapSize=1G",
+    "-XX:MaxHeapSize=1G"
   )
 )
 
@@ -33,7 +36,6 @@ lazy val associatedPressFeed =
       ThisBuild / scalaVersion := scalaVersionSpec,
       libraryDependencies ++= Seq(
         ws,
-        "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
         "software.amazon.awssdk" % "s3" % "2.20.8",
         "software.amazon.awssdk" % "dynamodb" % "2.20.8",
         "com.gu" %% "simple-configuration-ssm" % "1.5.7",

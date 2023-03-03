@@ -24,7 +24,7 @@ export class AssociatedPressFeed extends GuStack {
 
 		new GuPlayWorkerApp(this, {
 			app: props.app ?? 'associated-press-feed',
-			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			monitoringConfiguration: {
 				snsTopicName: 'pagerduty-notification-topic',
 				http5xxAlarm: {

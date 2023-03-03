@@ -1,6 +1,6 @@
 package config
 
-import play.api.{Configuration, UnexpectedException}
+import play.api.Configuration
 
 class AppConfig(playConfig: Configuration) {
   private val config = playConfig.underlying
