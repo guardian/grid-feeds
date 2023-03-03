@@ -3,12 +3,15 @@ package services
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.stream.Materializer
 import client.HttpClient.get
+import config.AWS.{readFromDynamoDB, writeToDynamoDB}
 import config.AppConfig
 import model.FeedResponse
 import play.api.Logging
 import play.api.libs.ws.StandaloneWSResponse
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success, Try}
 
 class AssociatedPressService(
     config: AppConfig,
@@ -25,8 +28,18 @@ class AssociatedPressService(
     associatedPressServiceActor ! getFirstPageUrl
   }
 
-  // TODO retrieve this from DynamoDB and fallback to config
-  private def getFirstPageUrl: String = config.associatedPressAPIDefaultFeedUrl
+  private def getFirstPageUrl: String = {
+    readFromDynamoDB(config.dynamoDBNextPageTable, "key", "nextPage") match {
+      case Success(values) =>
+        values.headOption.getOrElse(config.associatedPressAPIDefaultFeedUrl)
+      case Failure(e) =>
+        logger.error(
+          "Failed to retrieve first page from dynamoDB, using default url instead",
+          e
+        )
+        config.associatedPressAPIDefaultFeedUrl
+    }
+  }
 }
 
 class AssociatedPressServiceActor(
@@ -56,7 +69,16 @@ class AssociatedPressServiceActor(
             logger
               .info(s"Received response with ${response.items.length} items")
             imageUploaderServiceActor ! response.items
-            // TODO write next page value to DynamoDB
+            writeNextPageToDynamoDB(response.nextPage) match {
+              case Success(_) =>
+                logger.debug(
+                  s"Successfully wrote next page to table: ${response.nextPage}"
+                )
+              case Failure(_) =>
+                logger.error(
+                  s"Failed to write next page to table: ${response.nextPage}"
+                )
+            }
             self ! response.nextPage
           })
       } else {
@@ -65,6 +87,15 @@ class AssociatedPressServiceActor(
         )
         resendRequest()
       }
+    }
+
+    def writeNextPageToDynamoDB(nextPage: String): Try[UpdateItemResponse] = {
+      writeToDynamoDB(
+        table = config.dynamoDBNextPageTable,
+        keyName = "key",
+        keyValue = "nextPage",
+        content = nextPage
+      )
     }
 
     def resendRequest(): Unit = {

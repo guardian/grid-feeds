@@ -34,7 +34,8 @@ lazy val associatedPressFeed =
       libraryDependencies ++= Seq(
         ws,
         "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
-        "software.amazon.awssdk" % "s3" % "2.20.3",
+        "software.amazon.awssdk" % "s3" % "2.20.8",
+        "software.amazon.awssdk" % "dynamodb" % "2.20.8",
         "com.gu" %% "simple-configuration-ssm" % "1.5.7",
         "org.scalatest" %% "scalatest" % "3.2.15" % "test",
       ),

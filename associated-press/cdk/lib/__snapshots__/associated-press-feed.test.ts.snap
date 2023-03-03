@@ -4,7 +4,8 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
 {
   "Metadata": {
     "gu:cdk:constructs": [
-      "GuPolicy",
+      "GuAllowPolicy",
+      "GuAllowPolicy",
       "GuVpcParameter",
       "GuSubnetListParameter",
       "GuSubnetListParameter",
@@ -991,40 +992,47 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "associatedpressfeedInstancePolicy262175A2": {
+    "associatedPressFeedNextPageTable7E492243": {
+      "DeletionPolicy": "Retain",
       "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "s3:GetObject",
-                "s3:PutObject",
-                "s3:ListBucket",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    {
-                      "Fn::ImportValue": "S3WatcherIngestBucketARN-TEST",
-                    },
-                    "/ap/*",
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "root",
-        "Roles": [
+        "AttributeDefinitions": [
           {
-            "Ref": "InstanceRoleAssociatedpressfeed489B555B",
+            "AttributeName": "key",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "key",
+            "KeyType": "HASH",
+          },
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 50,
+          "WriteCapacityUnits": 50,
+        },
+        "TableName": "associated-press-feed-TEST",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/grid-feeds",
+          },
+          {
+            "Key": "Stack",
+            "Value": "media-service",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
     },
     "mediaserviceTESTassociatedpressfeedA84215E5": {
       "Properties": {
@@ -1167,6 +1175,63 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
+    },
+    "nextPageTableE53D51A1": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "dynamodb:*",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "associatedPressFeedNextPageTable7E492243",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "nextPageTableE53D51A1",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleAssociatedpressfeed489B555B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "s3GridIngestBucket00A5D29E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::ImportValue": "S3WatcherIngestBucketARN-TEST",
+                    },
+                    "/ap/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "s3GridIngestBucket00A5D29E",
+        "Roles": [
+          {
+            "Ref": "InstanceRoleAssociatedpressfeed489B555B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
   },
 }

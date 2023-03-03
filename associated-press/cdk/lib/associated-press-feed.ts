@@ -1,11 +1,11 @@
+import { GuPlayWorkerApp } from '@guardian/cdk';
 import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
+import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
 import type { App } from 'aws-cdk-lib';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { GuPlayWorkerApp } from '@guardian/cdk';
 import { Fn } from 'aws-cdk-lib';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { GuPolicy } from '@guardian/cdk/lib/constructs/iam';
+import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 
 export class AssociatedPressFeed extends GuStack {
 	constructor(scope: App, id: string, props: GuStackProps) {
@@ -15,15 +15,11 @@ export class AssociatedPressFeed extends GuStack {
 			`S3WatcherIngestBucketARN-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
 
-		const gridS3BucketPolicy = new PolicyStatement({
-			effect: Effect.ALLOW,
-			actions: ['s3:GetObject', 's3:PutObject', 's3:ListBucket'],
-			resources: [`${gridIngestBucketArn}/ap/*`],
-		});
-
-		const instancePolicy = new GuPolicy(this, `${props.app}InstancePolicy`, {
-			policyName: 'root',
-			statements: [gridS3BucketPolicy],
+		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
+			partitionKey: { name: 'key', type: AttributeType.STRING },
+			tableName: `${props.app ?? 'associated-press-feed'}-${props.stage}`,
+			readCapacity: 50,
+			writeCapacity: 50
 		});
 
 		new GuPlayWorkerApp(this, {
@@ -44,11 +40,20 @@ export class AssociatedPressFeed extends GuStack {
 				},
 			},
 			roleConfiguration: {
-				additionalPolicies: [instancePolicy],
+				additionalPolicies: [
+					new GuAllowPolicy(this, 's3GridIngestBucket', {
+						resources: [`${gridIngestBucketArn}/ap/*`],
+						actions: ['s3:PutObject'],
+					}),
+					new GuAllowPolicy(this, 'nextPageTable', {
+						resources: [nextPageTable.tableArn],
+						actions: ['dynamodb:*'],
+					}),
+				],
 			},
 			applicationLogging: {
 				enabled: true,
-			}
+			},
 		});
 	}
 }
