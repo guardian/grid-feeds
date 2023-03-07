@@ -13,7 +13,9 @@ object FeedResponse extends Logging {
     val json = Json.parse(res)
     FeedResponse(
       nextPage = (json \ "data" \ "next_page").as[String],
-      items = (json \ "data" \ "items").toOption.map(getItemArrayFromJsValue).getOrElse(Array.empty)
+      items = (json \ "data" \ "items").toOption
+        .map(getItemArrayFromJsValue)
+        .getOrElse(Array.empty)
     )
   } match {
     case Success(response) => Some(response)
@@ -28,14 +30,20 @@ object FeedResponse extends Logging {
         jsArray.value.toArray
           .filter(item =>
             (item \ "item" \ "type").as[String] == "picture" &&
-            (item \ "item" \ "altids" \ "itemid").toOption.isDefined &&
-            (item \ "item" \ "renditions" \ "main" \ "originalfilename").toOption.isDefined &&
-            (item \ "item" \ "renditions" \ "main" \ "href").toOption.isDefined)
-          .map(item => ImageItem(
-            contentId = (item \ "item" \ "altids" \ "itemid").as[String],
-            fileName = (item \ "item" \ "renditions" \ "main" \ "originalfilename").as[String],
-            downloadLink = (item \ "item" \ "renditions" \ "main" \ "href").as[String]
-          ))
+              (item \ "item" \ "altids" \ "itemid").toOption.isDefined &&
+              (item \ "item" \ "renditions" \ "main" \ "originalfilename").toOption.isDefined &&
+              (item \ "item" \ "renditions" \ "main" \ "href").toOption.isDefined
+          )
+          .map(item =>
+            ImageItem(
+              contentId = (item \ "item" \ "altids" \ "itemid").as[String],
+              fileName =
+                (item \ "item" \ "renditions" \ "main" \ "originalfilename")
+                  .as[String],
+              downloadLink =
+                (item \ "item" \ "renditions" \ "main" \ "href").as[String]
+            )
+          )
       case _ => Array.empty
     }
   }

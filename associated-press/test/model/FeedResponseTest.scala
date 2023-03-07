@@ -4,8 +4,10 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 class FeedResponseTest extends AnyFunSuite with Matchers {
-  val nextPage = "https://api.ap.org/media/v2.2-preview/content/feed?qt=12345&seq=12345"
-  val downloadLink = "https://api.ap.org/media/v2.2-preview/content/12345/download"
+  val nextPage =
+    "https://api.ap.org/media/v2.2-preview/content/feed?qt=12345&seq=12345"
+  val downloadLink =
+    "https://api.ap.org/media/v2.2-preview/content/12345/download"
   val pictureItem: String = s"""{
     "type": "picture",
     "altids": {

@@ -18,3 +18,15 @@ You will need media-service AWS credentials.
 Run `scripts/fetch-config.sh` to fetch down DEV config.
 
 Run `sbt associated-press-feed/run`
+
+### Fixing CI failures
+Our CI runs `scalafmtCheckAll` which checks our Scala is formatted correctly.
+
+If this check fails, you can run `sbt scalafmtAll` in the project root fix formatting.
+
+### Resetting the feed
+We store the next page of the feed in DynamoDB which means we can pick up where we left off in the event of an outage or redeployment.
+
+To reset the feed to start consuming from present time, delete the entry in the appropriate DynamoDB table.
+
+The app will default back to the 'starter' url stored in parameter store.

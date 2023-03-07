@@ -1,2 +1,2 @@
 # Management
-GET     /management/healthcheck             controllers.HealthcheckController.healthCheck
+GET     /healthcheck             controllers.HealthcheckController.healthCheck
