@@ -24,8 +24,8 @@ val riffraffSettings = Seq(
     (associatedPressFeed / Debian / packageBin).value -> s"${(associatedPressFeed / name).value}/${(associatedPressFeed / name).value}.deb",
     baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-CODE.template.json",
     baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-PROD.template.json",
-    baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
-  ),
+    baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml"
+  )
 )
 
 lazy val associatedPressFeed =
@@ -36,10 +36,10 @@ lazy val associatedPressFeed =
       ThisBuild / scalaVersion := scalaVersionSpec,
       libraryDependencies ++= Seq(
         ws,
-        "software.amazon.awssdk" % "s3" % "2.20.8",
-        "software.amazon.awssdk" % "dynamodb" % "2.20.8",
+        "software.amazon.awssdk" % "s3" % "2.20.24",
+        "software.amazon.awssdk" % "dynamodb" % "2.20.24",
         "com.gu" %% "simple-configuration-ssm" % "1.5.7",
-        "org.scalatest" %% "scalatest" % "3.2.15" % "test",
+        "org.scalatest" %% "scalatest" % "3.2.15" % "test"
       ),
       routesGenerator := InjectedRoutesGenerator,
       PlayKeys.playDefaultPort := 8855
