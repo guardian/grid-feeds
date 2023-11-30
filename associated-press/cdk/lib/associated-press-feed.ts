@@ -3,7 +3,7 @@ import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
 import type { App } from 'aws-cdk-lib';
-import { Fn } from 'aws-cdk-lib';
+import { Fn, Tags } from 'aws-cdk-lib';
 import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 
@@ -21,6 +21,9 @@ export class AssociatedPressFeed extends GuStack {
 			readCapacity: 50,
 			writeCapacity: 50
 		});
+
+		// Enable automated backups via https://github.com/guardian/aws-backup
+		Tags.of(nextPageTable).add("devx-backup-enabled", "true");
 
 		new GuPlayWorkerApp(this, {
 			app: props.app ?? 'associated-press-feed',
