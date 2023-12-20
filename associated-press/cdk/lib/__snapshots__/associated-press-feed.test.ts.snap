@@ -1218,7 +1218,7 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
                   "",
                   [
                     {
-                      "Fn::ImportValue": "S3WatcherIngestBucketARN-TEST",
+                      "Fn::ImportValue": "IngestQueueBucketArn-TEST",
                     },
                     "/ap/*",
                   ],

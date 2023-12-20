@@ -12,9 +12,9 @@ export class AssociatedPressFeed extends GuStack {
 		super(scope, id, props);
 
 		const gridIngestBucketArn = Fn.importValue(
-			`S3WatcherIngestBucketARN-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
+			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
-
+		
 		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
 			partitionKey: { name: 'key', type: AttributeType.STRING },
 			tableName: `${props.app ?? 'associated-press-feed'}-${props.stage}`,
