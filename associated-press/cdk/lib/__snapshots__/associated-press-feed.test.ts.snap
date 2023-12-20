@@ -198,6 +198,43 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       },
       "Type": "AWS::IAM::Policy",
     },
+    "GridIngestBucketName7D914517": {
+      "Properties": {
+        "Description": "The s3 bucket name to upload images to. [AUTOMATICALLY UPDATED FROM CDK/CFN]",
+        "Name": "/TEST/media-service/associated-press-feed/aws/s3/uploadBucketName",
+        "Tags": {
+          "Stack": "media-service",
+          "Stage": "TEST",
+          "gu:cdk:version": "TEST",
+          "gu:repo": "guardian/grid-feeds",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::Select": [
+                    5,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Fn::ImportValue": "IngestQueueBucketArn-TEST",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
+    },
     "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF": {
       "Properties": {
         "GroupDescription": "Allow all outbound HTTPS traffic",
