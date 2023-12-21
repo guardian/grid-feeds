@@ -14,7 +14,7 @@ export class AssociatedPressFeed extends GuStack {
 		super(scope, id, props);
 
 		const gridIngestBucketArn = Fn.importValue(
-			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
+			`S3WatcherIngestBucketARN-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
 
 		const gridIngestBucket = s3.Bucket.fromBucketArn(this, 'gridIngestBucket', gridIngestBucketArn);
