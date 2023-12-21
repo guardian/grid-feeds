@@ -6,6 +6,8 @@ import type { App } from 'aws-cdk-lib';
 import { Fn, Tags } from 'aws-cdk-lib';
 import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import {StringParameter} from "aws-cdk-lib/aws-ssm";
 
 export class AssociatedPressFeed extends GuStack {
 	constructor(scope: App, id: string, props: GuStackProps) {
@@ -14,7 +16,16 @@ export class AssociatedPressFeed extends GuStack {
 		const gridIngestBucketArn = Fn.importValue(
 			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
-		
+
+		const gridIngestBucket = s3.Bucket.fromBucketArn(this, 'gridIngestBucket', gridIngestBucketArn);
+
+		const {stage, stack, app} = props;
+		new StringParameter(this, "GridIngestBucketName", {
+			parameterName: `/${stage}/${stack}/${app}/aws/s3/uploadBucketName`,
+			stringValue: gridIngestBucket.bucketName,
+			description: "The s3 bucket name to upload images to. [AUTOMATICALLY UPDATED FROM CDK/CFN]"
+		})
+
 		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
 			partitionKey: { name: 'key', type: AttributeType.STRING },
 			tableName: `${props.app ?? 'associated-press-feed'}-${props.stage}`,
@@ -38,8 +49,8 @@ export class AssociatedPressFeed extends GuStack {
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: {
 				distributable: {
-					fileName: `associated-press-feed.deb`,
-					executionStatement: `dpkg -i /associated-press-feed/associated-press-feed.deb`,
+					fileName: "associated-press-feed.deb",
+					executionStatement: "dpkg -i /associated-press-feed/associated-press-feed.deb",
 				},
 			},
 			roleConfiguration: {
