@@ -222,7 +222,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
                       "Fn::Split": [
                         ":",
                         {
-                          "Fn::ImportValue": "S3WatcherIngestBucketARN-TEST",
+                          "Fn::ImportValue": "IngestQueueBucketArn-TEST",
                         },
                       ],
                     },
@@ -1255,7 +1255,7 @@ dpkg -i /associated-press-feed/associated-press-feed.deb",
                   "",
                   [
                     {
-                      "Fn::ImportValue": "S3WatcherIngestBucketARN-TEST",
+                      "Fn::ImportValue": "IngestQueueBucketArn-TEST",
                     },
                     "/ap/*",
                   ],
