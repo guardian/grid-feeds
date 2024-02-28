@@ -36,7 +36,7 @@ lazy val associatedPressFeed =
       ThisBuild / scalaVersion := scalaVersionSpec,
       libraryDependencies ++= Seq(
         ws,
-        "software.amazon.awssdk" % "s3" % "2.20.8",
+        "software.amazon.awssdk" % "s3" % "2.20.162",
         "software.amazon.awssdk" % "dynamodb" % "2.20.162",
         "com.gu" %% "simple-configuration-ssm" % "1.5.7",
         "org.scalatest" %% "scalatest" % "3.2.15" % "test"
