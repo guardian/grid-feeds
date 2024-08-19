@@ -14,25 +14,26 @@ jobs:
       contents: read
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Configure AWS creds
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
           aws-region: eu-west-1
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: adopt
+          cache: sbt
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
       - name: AP Feed - Build GuCDK
         working-directory: 'associated-press/cdk'
         run: |
-          npm install
+          npm ci
           npm run test
           npm run synth
       - name: AP feed - RiffRaff Deploy
