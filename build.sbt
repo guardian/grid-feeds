@@ -3,6 +3,10 @@ import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 organization := "com.gu"
 lazy val scalaVersionSpec = "2.13.10"
 
+/* normalise Debian package name */
+val normalisePackageName =
+  taskKey[Unit]("Rename debian package name to be normalised")
+
 val distributionSettings = Seq(
   maintainer := "Editorial Tools <digitalcms.dev@guardian.co.uk>",
   Debian / name := normalizedName.value,
@@ -15,17 +19,6 @@ val distributionSettings = Seq(
     "-XX:InitialHeapSize=1G",
     "-XX:MaxHeapSize=1G"
   )
-)
-
-val riffraffSettings = Seq(
-  riffRaffPackageName := s"editorial-tools:${name.value}",
-  riffRaffManifestProjectName := riffRaffPackageName.value,
-  riffRaffArtifactResources := Seq(
-    (associatedPressFeed / Debian / packageBin).value -> s"${(associatedPressFeed / name).value}/${(associatedPressFeed / name).value}.deb",
-    baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-CODE.template.json",
-    baseDirectory.value / "associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json" -> s"${(associatedPressFeed / name).value}/cloudformation/AssociatedPressFeed-PROD.template.json",
-    baseDirectory.value / "riff-raff.yaml" -> "riff-raff.yaml",
-  ),
 )
 
 lazy val associatedPressFeed =
@@ -42,11 +35,18 @@ lazy val associatedPressFeed =
         "org.scalatest" %% "scalatest" % "3.2.15" % "test",
       ),
       routesGenerator := InjectedRoutesGenerator,
-      PlayKeys.playDefaultPort := 8855
+      PlayKeys.playDefaultPort := 8855,
+      Debian / packageName := normalizedName.value,
+      normalisePackageName := {
+        val targetDirectory = baseDirectory.value / "target"
+        val debFile = (targetDirectory ** "*.deb").get().head
+        val newFile =
+          file(debFile.getParent) / ((Debian / packageName).value + ".deb")
+
+        IO.move(debFile, newFile)
+      }
     )
     .settings(distributionSettings)
 
 lazy val root = Project("grid-feeds", file("."))
   .aggregate(associatedPressFeed)
-  .enablePlugins(RiffRaffArtifact)
-  .settings(riffraffSettings)

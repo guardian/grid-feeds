@@ -7,8 +7,8 @@ deployments:
     contentDirectory: associated-press-feed
     parameters:
       templateStagePaths:
-        CODE: cloudformation/AssociatedPressFeed-CODE.template.json
-        PROD: cloudformation/AssociatedPressFeed-PROD.template.json
+        CODE: AssociatedPressFeed-CODE.template.json
+        PROD: AssociatedPressFeed-PROD.template.json
       amiTags:
         BuiltBy: amigo
         AmigoStage: PROD
