@@ -1,4 +1,5 @@
 name: CI
+
 on:
   pull_request:
   workflow_dispatch:
@@ -12,14 +13,11 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      pull-requests: write
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Configure AWS creds
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-          aws-region: eu-west-1
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -36,6 +34,20 @@ jobs:
           npm ci
           npm run test
           npm run synth
-      - name: AP feed - RiffRaff Deploy
+      - name: AP feed - Scala build
         run: |
-          sbt clean scalafmtCheckAll compile test riffRaffUpload
+          sbt clean scalafmtCheckAll compile test Debian/packageBin normalisePackageName
+
+      - name: Upload to riff-raff
+        uses: guardian/actions-riff-raff@v4
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
+          buildNumber: ${{ env.GITHUB_RUN_NUMBER }}
+          projectName: editorial-tools:grid-feeds
+          configPath: riff-raff.yaml
+          contentDirectories: |
+            associated-press-feed:
+              - associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json
+              - associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json
+              - associated-press/target/associated-press-feed.deb
