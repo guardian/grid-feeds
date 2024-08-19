@@ -12,7 +12,7 @@ val distributionSettings = Seq(
   Debian / name := normalizedName.value,
   Debian / serverLoading := Some(Systemd),
   Debian / serviceAutostart := true,
-  debianPackageDependencies := Seq("openjdk-8-jre-headless"),
+  debianPackageDependencies := Seq("java11-runtime"),
   Universal / javaOptions ++= Seq(
     "-Dpidfile.path=/dev/null",
     "-J-XX:+HeapDumpOnOutOfMemoryError",
