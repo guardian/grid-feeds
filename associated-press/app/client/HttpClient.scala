@@ -16,7 +16,10 @@ object HttpClient {
       headers: Seq[(String, String)] = Seq.empty,
       parameters: Seq[(String, String)] = Seq.empty
   ): Future[StandaloneWSResponse] = {
-    ws.url(uri)
+    // on the CODE env, the preview feed will return HTTP S3 URLs, but S3 now requires
+    // HTTPS... force all the URIs to HTTPS to allow the requests to complete.
+    val forcedHttps = uri.replaceAll("^http://", "https://")
+    ws.url(forcedHttps)
       .addHttpHeaders(headers: _*)
       .addQueryStringParameters(parameters: _*)
       .get()
