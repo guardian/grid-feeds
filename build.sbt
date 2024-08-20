@@ -21,6 +21,8 @@ val distributionSettings = Seq(
   )
 )
 
+val awsSdkV2Version = "2.27.8"
+
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press"))
     .enablePlugins(PlayScala, JDebPackaging, SystemdPlugin)
@@ -29,10 +31,10 @@ lazy val associatedPressFeed =
       ThisBuild / scalaVersion := scalaVersionSpec,
       libraryDependencies ++= Seq(
         ws,
-        "software.amazon.awssdk" % "s3" % "2.20.8",
-        "software.amazon.awssdk" % "dynamodb" % "2.20.8",
-        "com.gu" %% "simple-configuration-ssm" % "1.5.7",
-        "org.scalatest" %% "scalatest" % "3.2.15" % "test",
+        "software.amazon.awssdk" % "s3" % awsSdkV2Version,
+        "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
+        "com.gu" %% "simple-configuration-ssm" % "2.0.0",
+        "org.scalatest" %% "scalatest" % "3.2.19" % "test",
       ),
       routesGenerator := InjectedRoutesGenerator,
       PlayKeys.playDefaultPort := 8855,
