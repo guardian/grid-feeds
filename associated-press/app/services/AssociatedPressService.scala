@@ -11,7 +11,9 @@ import play.api.libs.ws.StandaloneWSResponse
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success, Try}
+import akka.actor.Timers
 
 class AssociatedPressService(
     config: AppConfig,
@@ -47,6 +49,7 @@ class AssociatedPressServiceActor(
     implicit val system: ActorSystem,
     implicit val executionContext: ExecutionContext
 ) extends Actor
+    with Timers
     with Logging {
   val imageUploaderServiceActor: ActorRef = system.actorOf(
     Props(new ImageUploaderService(config, executionContext)),
@@ -100,9 +103,8 @@ class AssociatedPressServiceActor(
 
     def resendRequest(): Unit = {
       // if there is an error, we wait 5 seconds and try fetching the page again
-      Thread.sleep(5000L)
-      logger.error(s"Resending request $page")
-      self ! page
+      logger.error(s"Resending request $page in 5 seconds")
+      timers.startSingleTimer(s"resend-$page", page, 5.seconds)
     }
   }
 }
