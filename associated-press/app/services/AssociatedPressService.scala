@@ -1,7 +1,7 @@
 package services
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
-import akka.stream.Materializer
+import org.apache.pekko.actor.{Actor, ActorRef, ActorSystem, Props}
+import org.apache.pekko.stream.Materializer
 import client.HttpClient.get
 import config.AWS.{readFromDynamoDB, writeToDynamoDB}
 import config.AppConfig

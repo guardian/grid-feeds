@@ -1,6 +1,6 @@
 package client
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import play.api.libs.ws.StandaloneWSResponse
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 

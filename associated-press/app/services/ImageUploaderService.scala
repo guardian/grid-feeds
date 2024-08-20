@@ -1,6 +1,6 @@
 package services
 
-import akka.actor.Actor
+import org.apache.pekko.actor.Actor
 import client.HttpClient.get
 import config.{AWS, AppConfig}
 import model.ImageItem
