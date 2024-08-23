@@ -21,7 +21,7 @@ val distributionSettings = Seq(
   )
 )
 
-val awsSdkV2Version = "2.27.8"
+val awsSdkV2Version = "2.27.11"
 
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press"))
@@ -34,7 +34,7 @@ lazy val associatedPressFeed =
         "software.amazon.awssdk" % "s3" % awsSdkV2Version,
         "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
         "com.gu" %% "simple-configuration-ssm" % "2.0.0",
-        "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+        "org.scalatest" %% "scalatest" % "3.2.19" % "test"
       ),
       routesGenerator := InjectedRoutesGenerator,
       PlayKeys.playDefaultPort := 8855,
