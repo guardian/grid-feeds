@@ -1,7 +1,7 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 
 organization := "com.gu"
-lazy val scalaVersionSpec = "2.13.14"
+lazy val scalaVersionSpec = "2.13.15"
 
 /* normalise Debian package name */
 val normalisePackageName =
@@ -34,7 +34,7 @@ lazy val associatedPressFeed =
         "software.amazon.awssdk" % "s3" % awsSdkV2Version,
         "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
         "com.gu" %% "simple-configuration-ssm" % "2.0.0",
-        "org.scalatest" %% "scalatest" % "3.2.19" % "test",
+        "org.scalatest" %% "scalatest" % "3.2.19" % "test"
       ),
       routesGenerator := InjectedRoutesGenerator,
       PlayKeys.playDefaultPort := 8855,
