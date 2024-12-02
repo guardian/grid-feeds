@@ -21,7 +21,7 @@ val distributionSettings = Seq(
   )
 )
 
-val awsSdkV2Version = "2.27.24"
+val awsSdkV2Version = "2.29.24"
 
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press"))
