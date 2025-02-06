@@ -22,12 +22,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: 11
-          distribution: corretto
-          cache: sbt
+
+      - name: Setup Java and sbt
+        uses: guardian/setup-scala@v1
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
