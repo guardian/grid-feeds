@@ -1127,16 +1127,13 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
             "AttributeType": "S",
           },
         ],
+        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": [
           {
             "AttributeName": "key",
             "KeyType": "HASH",
           },
         ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 50,
-          "WriteCapacityUnits": 50,
-        },
         "TableName": "associated-press-feed-TEST",
         "Tags": [
           {

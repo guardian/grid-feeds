@@ -4,9 +4,9 @@ import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
 import type { App } from 'aws-cdk-lib';
 import { Fn, Tags } from 'aws-cdk-lib';
-import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import {StringParameter} from "aws-cdk-lib/aws-ssm";
 
 export class AssociatedPressFeed extends GuStack {
@@ -17,7 +17,7 @@ export class AssociatedPressFeed extends GuStack {
 			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
 
-		const gridIngestBucket = s3.Bucket.fromBucketArn(this, 'gridIngestBucket', gridIngestBucketArn);
+		const gridIngestBucket = Bucket.fromBucketArn(this, 'gridIngestBucket', gridIngestBucketArn);
 
 		const {stage, stack, app} = props;
 		new StringParameter(this, "GridIngestBucketName", {
@@ -29,8 +29,7 @@ export class AssociatedPressFeed extends GuStack {
 		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
 			partitionKey: { name: 'key', type: AttributeType.STRING },
 			tableName: `${props.app ?? 'associated-press-feed'}-${props.stage}`,
-			readCapacity: 50,
-			writeCapacity: 50
+			billingMode: BillingMode.PAY_PER_REQUEST,
 		});
 
 		// Enable automated backups via https://github.com/guardian/aws-backup
