@@ -84,7 +84,7 @@ object AWS {
       table: String,
       keyName: String,
       keyValue: String
-  ): Try[Iterable[String]] = {
+  ): Try[Option[String]] = {
     Try {
       dynamoDbClient
         .getItem(
@@ -99,9 +99,9 @@ object AWS {
             .build()
         )
         .item()
-        .values()
         .asScala
-        .map(value => value.s())
+        .get("nextPage")
+        .map(_.s())
     }
   }
 }

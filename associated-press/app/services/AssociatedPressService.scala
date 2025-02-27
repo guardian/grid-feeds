@@ -31,7 +31,7 @@ class AssociatedPressService(
   private def getFirstPageUrl: String = {
     readFromDynamoDB(config.dynamoDBNextPageTable, "key", "nextPage") match {
       case Success(values) =>
-        values.headOption.getOrElse(config.associatedPressAPIDefaultFeedUrl)
+        values.getOrElse(config.associatedPressAPIDefaultFeedUrl)
       case Failure(e) =>
         logger.error(
           "Failed to retrieve first page from dynamoDB, using default url instead",
