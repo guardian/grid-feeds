@@ -12,7 +12,7 @@ deployments:
       amiTags:
         BuiltBy: amigo
         AmigoStage: PROD
-        Recipe: editorial-tools-focal-java11-ARM-WITH-cdk-base
+        Recipe: editorial-tools-jammy-java17
       amiParameter: AMIAssociatedpressfeed
       prependStackToCloudFormationStackName: false
   associated-press-feed-autoscaling:
