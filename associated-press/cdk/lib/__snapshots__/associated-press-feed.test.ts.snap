@@ -93,10 +93,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         "MetricsCollection": [
           {
             "Granularity": "1Minute",
-            "Metrics": [
-              "GroupTotalInstances",
-              "GroupInServiceInstances",
-            ],
           },
         ],
         "MinSize": "1",
@@ -1185,6 +1181,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
           "InstanceType": "t4g.small",
           "MetadataOptions": {
             "HttpTokens": "required",
+            "InstanceMetadataTags": "enabled",
           },
           "SecurityGroupIds": [
             {
