@@ -1,7 +1,7 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 
 organization := "com.gu"
-lazy val scalaVersionSpec = "2.13.15"
+lazy val scalaVersionSpec = "2.13.16"
 
 /* normalise Debian package name */
 val normalisePackageName =
