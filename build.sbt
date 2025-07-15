@@ -22,6 +22,19 @@ val distributionSettings = Seq(
 )
 
 val awsSdkV2Version = "2.30.38"
+val jacksonVersion = "2.19.1"
+
+val jacksonOverrides = Seq(
+  "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion,
+  "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+)
+
 
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press"))
@@ -36,6 +49,7 @@ lazy val associatedPressFeed =
         "com.gu" %% "simple-configuration-ssm" % "5.0.0",
         "org.scalatest" %% "scalatest" % "3.2.19" % "test"
       ),
+      dependencyOverrides ++= jacksonOverrides,
       routesGenerator := InjectedRoutesGenerator,
       PlayKeys.playDefaultPort := 8855,
       Debian / packageName := normalizedName.value,
