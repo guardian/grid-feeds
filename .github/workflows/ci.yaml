@@ -47,9 +47,10 @@ jobs:
           roleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
           buildNumber: ${{ env.GITHUB_RUN_NUMBER }}
           projectName: editorial-tools:grid-feeds
-          configPath: riff-raff.yaml
+          configPath: associated-press/cdk/cdk.out/riff-raff.yaml
           contentDirectories: |
             associated-press-feed:
+              - associated-press/target/associated-press-feed.deb
+            cdk.out:
               - associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json
               - associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json
-              - associated-press/target/associated-press-feed.deb

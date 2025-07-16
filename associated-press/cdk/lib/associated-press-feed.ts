@@ -75,6 +75,9 @@ export class AssociatedPressFeed extends GuStack {
 			applicationLogging: {
 				enabled: true,
 			},
+			imageRecipe: {
+				Recipe: 'editorial-tools-jammy-java17',
+			},
 		});
 	}
 }
