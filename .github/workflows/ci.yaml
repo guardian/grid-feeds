@@ -51,6 +51,8 @@ jobs:
           contentDirectories: |
             associated-press-feed:
               - associated-press/target/associated-press-feed.deb
+            associated-press-feed-v2:
+              - associated-press/target/associated-press-feed.deb
             cdk.out:
               - associated-press/cdk/cdk.out/AssociatedPressFeed-CODE.template.json
               - associated-press/cdk/cdk.out/AssociatedPressFeed-PROD.template.json

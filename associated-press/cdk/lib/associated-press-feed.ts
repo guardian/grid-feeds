@@ -1,6 +1,7 @@
 import { GuPlayWorkerApp } from '@guardian/cdk';
 import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
-import { GuStack } from '@guardian/cdk/lib/constructs/core';
+import { GuStack, GuStringParameter } from '@guardian/cdk/lib/constructs/core';
+import { GuVpc } from '@guardian/cdk/lib/constructs/ec2';
 import { GuAllowPolicy } from '@guardian/cdk/lib/constructs/iam';
 import type { App } from 'aws-cdk-lib';
 import { Fn, Tags } from 'aws-cdk-lib';
@@ -83,6 +84,53 @@ export class AssociatedPressFeed extends GuStack {
 				Recipe: 'editorial-tools-jammy-java17',
 			},
 			instanceMetricGranularity: stage === 'PROD' ? '1Minute' : '5Minute',
+		});
+
+		/**
+		 * The `VpcId` in Cloudformation for this stack has the same _default_ value as the param
+		 * we're creating here, but its actual value has been overwritten for use by the existing
+		 * GuPlayWorkerApp. So we're temporarily creating a new param that can hold the correct
+		 * value for the new app.
+		 */
+		const vpcIdParam = new GuStringParameter(this, 'PrimaryVpcId', {
+			fromSSM: true,
+			default: '/account/vpc/primary/id',
+		});
+
+		const vpc = GuVpc.fromId(this, 'ApplicationVpc', {
+			vpcId: vpcIdParam.valueAsString,
+		});
+
+		const v2AppName = `${app}-v2`;
+
+		new GuPlayWorkerApp(this, {
+			app: v2AppName,
+			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
+			monitoringConfiguration: {
+				snsTopicName: 'pagerduty-notification-topic',
+				http5xxAlarm: {
+					tolerated5xxPercentage: 5,
+				},
+				unhealthyInstancesAlarm: true,
+			},
+			scaling: { minimumInstances: 1, maximumInstances: 2 },
+			userData: {
+				distributable: {
+					fileName: 'associated-press-feed.deb',
+					executionStatement: `dpkg -i /${v2AppName}/associated-press-feed.deb`,
+				},
+			},
+			roleConfiguration: {
+				additionalPolicies,
+			},
+			applicationLogging: {
+				enabled: true,
+			},
+			imageRecipe: {
+				Recipe: 'editorial-tools-jammy-java17',
+			},
+			instanceMetricGranularity: stage === 'PROD' ? '1Minute' : '5Minute',
+			vpc,
 		});
 	}
 }
