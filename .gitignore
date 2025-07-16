@@ -2,3 +2,6 @@
 target/
 .bsp
 logs
+.vscode
+.metals
+.idea
