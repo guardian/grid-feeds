@@ -20,7 +20,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       "GuParameterStoreReadPolicy",
       "GuAmiParameter",
       "GuHttpsEgressSecurityGroup",
-      "GuWazuhAccess",
       "GuAutoScalingGroup",
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
@@ -396,6 +395,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
             "Expression": "100*(m1+m2)/m3",
             "Id": "expr_1",
             "Label": "% of 5XX responses served for associated-press-feed (load balancer and instances combined)",
+            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -586,27 +586,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "InternalIngressSecurityGroupAssociatedpressfeedtoAssociatedPressFeedWazuhSecurityGroup29A5C4509000E99D0AFA": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
-            "GroupId",
-          ],
-        },
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "InternalIngressSecurityGroupAssociatedpressfeed0E002BC2",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
-    },
     "ListenerAssociatedpressfeed462D6CC6": {
       "Properties": {
         "DefaultActions": [
@@ -722,27 +701,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
             "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
-            "GroupId",
-          ],
-        },
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
-    },
-    "LoadBalancerAssociatedpressfeedSecurityGrouptoAssociatedPressFeedWazuhSecurityGroup29A5C4509000ABA6C612": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
             "GroupId",
           ],
         },
@@ -1031,17 +989,8 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         "SecurityGroupEgress": [
           {
             "CidrIp": "0.0.0.0/0",
-            "Description": "Wazuh event logging",
-            "FromPort": 1514,
-            "IpProtocol": "tcp",
-            "ToPort": 1514,
-          },
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Wazuh agent registration",
-            "FromPort": 1515,
-            "IpProtocol": "tcp",
-            "ToPort": 1515,
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
           },
         ],
         "Tags": [
@@ -1071,48 +1020,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-    },
-    "WazuhSecurityGroupfromAssociatedPressFeedInternalIngressSecurityGroupAssociatedpressfeedBABB87199000719E200F": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "InternalIngressSecurityGroupAssociatedpressfeed0E002BC2",
-            "GroupId",
-          ],
-        },
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "WazuhSecurityGroupfromAssociatedPressFeedLoadBalancerAssociatedpressfeedSecurityGroup1EE83363900077A500EB": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
-            "GroupId",
-          ],
-        },
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "associatedPressFeedNextPageTable7E492243": {
       "DeletionPolicy": "Retain",
@@ -1183,16 +1090,13 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
             "HttpTokens": "required",
             "InstanceMetadataTags": "enabled",
           },
+          "Monitoring": {
+            "Enabled": false,
+          },
           "SecurityGroupIds": [
             {
               "Fn::GetAtt": [
                 "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
-                "GroupId",
-              ],
-            },
-            {
-              "Fn::GetAtt": [
-                "WazuhSecurityGroup",
                 "GroupId",
               ],
             },
