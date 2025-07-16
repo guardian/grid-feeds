@@ -7,7 +7,7 @@ import { Fn, Tags } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import {StringParameter} from "aws-cdk-lib/aws-ssm";
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export class AssociatedPressFeed extends GuStack {
 	constructor(scope: App, id: string, props: GuStackProps) {
@@ -17,14 +17,19 @@ export class AssociatedPressFeed extends GuStack {
 			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
 		);
 
-		const gridIngestBucket = Bucket.fromBucketArn(this, 'gridIngestBucket', gridIngestBucketArn);
+		const gridIngestBucket = Bucket.fromBucketArn(
+			this,
+			'gridIngestBucket',
+			gridIngestBucketArn,
+		);
 
-		const {stage, stack, app} = props;
-		new StringParameter(this, "GridIngestBucketName", {
+		const { stage, stack, app } = props;
+		new StringParameter(this, 'GridIngestBucketName', {
 			parameterName: `/${stage}/${stack}/${app}/aws/s3/uploadBucketName`,
 			stringValue: gridIngestBucket.bucketName,
-			description: "The s3 bucket name to upload images to. [AUTOMATICALLY UPDATED FROM CDK/CFN]"
-		})
+			description:
+				'The s3 bucket name to upload images to. [AUTOMATICALLY UPDATED FROM CDK/CFN]',
+		});
 
 		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
 			partitionKey: { name: 'key', type: AttributeType.STRING },
@@ -33,7 +38,18 @@ export class AssociatedPressFeed extends GuStack {
 		});
 
 		// Enable automated backups via https://github.com/guardian/aws-backup
-		Tags.of(nextPageTable).add("devx-backup-enabled", "true");
+		Tags.of(nextPageTable).add('devx-backup-enabled', 'true');
+
+		const additionalPolicies = [
+			new GuAllowPolicy(this, 's3GridIngestBucket', {
+				resources: [`${gridIngestBucketArn}/ap/*`],
+				actions: ['s3:PutObject'],
+			}),
+			new GuAllowPolicy(this, 'nextPageTable', {
+				resources: [nextPageTable.tableArn],
+				actions: ['dynamodb:*'],
+			}),
+		];
 
 		new GuPlayWorkerApp(this, {
 			app: props.app ?? 'associated-press-feed',
@@ -48,21 +64,13 @@ export class AssociatedPressFeed extends GuStack {
 			scaling: { minimumInstances: 1, maximumInstances: 2 },
 			userData: {
 				distributable: {
-					fileName: "associated-press-feed.deb",
-					executionStatement: "dpkg -i /associated-press-feed/associated-press-feed.deb",
+					fileName: 'associated-press-feed.deb',
+					executionStatement:
+						'dpkg -i /associated-press-feed/associated-press-feed.deb',
 				},
 			},
 			roleConfiguration: {
-				additionalPolicies: [
-					new GuAllowPolicy(this, 's3GridIngestBucket', {
-						resources: [`${gridIngestBucketArn}/ap/*`],
-						actions: ['s3:PutObject'],
-					}),
-					new GuAllowPolicy(this, 'nextPageTable', {
-						resources: [nextPageTable.tableArn],
-						actions: ['dynamodb:*'],
-					}),
-				],
+				additionalPolicies,
 			},
 			applicationLogging: {
 				enabled: true,
