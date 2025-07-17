@@ -70,8 +70,7 @@ export class AssociatedPressFeed extends GuStack {
 			userData: {
 				distributable: {
 					fileName: 'associated-press-feed.deb',
-					executionStatement:
-						'dpkg -i /associated-press-feed/associated-press-feed.deb',
+					executionStatement: `dpkg -i /${app}/associated-press-feed.deb`,
 				},
 			},
 			roleConfiguration: {
