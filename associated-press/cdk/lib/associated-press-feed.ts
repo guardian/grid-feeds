@@ -9,9 +9,15 @@ import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
+type AssociatedPressFeedProps = GuStackProps & {
+	app: string;
+};
+
 export class AssociatedPressFeed extends GuStack {
-	constructor(scope: App, id: string, props: GuStackProps) {
+	constructor(scope: App, id: string, props: AssociatedPressFeedProps) {
 		super(scope, id, props);
+
+		const { stage, stack, app } = props;
 
 		const gridIngestBucketArn = Fn.importValue(
 			`IngestQueueBucketArn-${props.stage === 'PROD' ? 'PROD' : 'TEST'}`,
@@ -23,7 +29,6 @@ export class AssociatedPressFeed extends GuStack {
 			gridIngestBucketArn,
 		);
 
-		const { stage, stack, app } = props;
 		new StringParameter(this, 'GridIngestBucketName', {
 			parameterName: `/${stage}/${stack}/${app}/aws/s3/uploadBucketName`,
 			stringValue: gridIngestBucket.bucketName,
@@ -33,7 +38,7 @@ export class AssociatedPressFeed extends GuStack {
 
 		const nextPageTable = new Table(this, 'associatedPressFeedNextPageTable', {
 			partitionKey: { name: 'key', type: AttributeType.STRING },
-			tableName: `${props.app ?? 'associated-press-feed'}-${props.stage}`,
+			tableName: `${app}-${stage}`,
 			billingMode: BillingMode.PAY_PER_REQUEST,
 		});
 
@@ -51,8 +56,8 @@ export class AssociatedPressFeed extends GuStack {
 			}),
 		];
 
-		const ec2App = new GuPlayWorkerApp(this, {
-			app: props.app ?? 'associated-press-feed',
+		new GuPlayWorkerApp(this, {
+			app,
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			monitoringConfiguration: {
 				snsTopicName: 'pagerduty-notification-topic',
