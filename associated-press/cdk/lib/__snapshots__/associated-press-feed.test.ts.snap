@@ -246,7 +246,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
           {
             "Key": "SystemdUnit",
             "PropagateAtLaunch": true,
-            "Value": "associated-press-feed-v2.service",
+            "Value": "associated-press-feed.service",
           },
         ],
         "TargetGroupARNs": [

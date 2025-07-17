@@ -125,6 +125,7 @@ export class AssociatedPressFeed extends GuStack {
 			},
 			applicationLogging: {
 				enabled: true,
+				systemdUnitName: app, // using `app` rather than `v2AppName` here means we don't need to duplicate the packaging process
 			},
 			imageRecipe: {
 				Recipe: 'editorial-tools-jammy-java17',
