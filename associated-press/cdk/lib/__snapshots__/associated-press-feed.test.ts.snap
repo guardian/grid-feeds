@@ -35,7 +35,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
       "Description": "DNS entry for LoadBalancerAssociatedpressfeed",
       "Value": {
         "Fn::GetAtt": [
-          "LoadBalancerAssociatedpressfeedB9C143A3",
+          "LoadBalancerAssociatedpressfeedTEST",
           "DNSName",
         ],
       },
@@ -406,7 +406,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerAssociatedpressfeedB9C143A3",
+                        "LoadBalancerAssociatedpressfeedTEST",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -429,7 +429,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerAssociatedpressfeedB9C143A3",
+                        "LoadBalancerAssociatedpressfeedTEST",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -452,7 +452,7 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerAssociatedpressfeedB9C143A3",
+                        "LoadBalancerAssociatedpressfeedTEST",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -597,14 +597,66 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
           },
         ],
         "LoadBalancerArn": {
-          "Ref": "LoadBalancerAssociatedpressfeedB9C143A3",
+          "Ref": "LoadBalancerAssociatedpressfeedTEST",
         },
         "Port": 8080,
         "Protocol": "HTTP",
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "LoadBalancerAssociatedpressfeedB9C143A3": {
+    "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4": {
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB AssociatedPressFeedLoadBalancerAssociatedpressfeed1C0F58F8",
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "associated-press-feed",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/grid-feeds",
+          },
+          {
+            "Key": "Stack",
+            "Value": "media-service",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "VpcId",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "LoadBalancerAssociatedpressfeedSecurityGrouptoAssociatedPressFeedGuHttpsEgressSecurityGroupAssociatedpressfeed5F0847849000071F4015": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
+            "GroupId",
+          ],
+        },
+        "FromPort": 9000,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 9000,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "LoadBalancerAssociatedpressfeedTEST": {
       "Properties": {
         "LoadBalancerAttributes": [
           {
@@ -663,58 +715,6 @@ exports[`The AssociatedPressFeed stack matches the snapshot 1`] = `
         "Type": "application",
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-    },
-    "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4": {
-      "Properties": {
-        "GroupDescription": "Automatically created Security Group for ELB AssociatedPressFeedLoadBalancerAssociatedpressfeed1C0F58F8",
-        "Tags": [
-          {
-            "Key": "App",
-            "Value": "associated-press-feed",
-          },
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/grid-feeds",
-          },
-          {
-            "Key": "Stack",
-            "Value": "media-service",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "VpcId": {
-          "Ref": "VpcId",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "LoadBalancerAssociatedpressfeedSecurityGrouptoAssociatedPressFeedGuHttpsEgressSecurityGroupAssociatedpressfeed5F0847849000071F4015": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupAssociatedpressfeed087368CF",
-            "GroupId",
-          ],
-        },
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerAssociatedpressfeedSecurityGroupDBF47AE4",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "ParameterStoreReadAssociatedpressfeedFA8E52ED": {
       "Properties": {

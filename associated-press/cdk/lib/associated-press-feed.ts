@@ -56,7 +56,7 @@ export class AssociatedPressFeed extends GuStack {
 			}),
 		];
 
-		new GuPlayWorkerApp(this, {
+		const ec2App = new GuPlayWorkerApp(this, {
 			app,
 			instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
 			monitoringConfiguration: {
@@ -83,6 +83,11 @@ export class AssociatedPressFeed extends GuStack {
 				Recipe: 'editorial-tools-jammy-java17',
 			},
 			instanceMetricGranularity: stage === 'PROD' ? '1Minute' : '5Minute',
+		});
+
+		this.overrideLogicalId(ec2App.loadBalancer, {
+			logicalId: `LoadBalancerAssociatedpressfeed${stage}`,
+			reason: 'Retaining a stateful resource previously defined in YAML',
 		});
 	}
 }
