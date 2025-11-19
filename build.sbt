@@ -21,7 +21,7 @@ val distributionSettings = Seq(
   )
 )
 
-val awsSdkV2Version = "2.30.38"
+val awsSdkV2Version = "2.38.9"
 val jacksonVersion = "2.19.1"
 
 val jacksonOverrides = Seq(
