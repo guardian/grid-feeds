@@ -21,7 +21,7 @@ val distributionSettings = Seq(
   )
 )
 
-val awsSdkV2Version = "2.30.38"
+val awsSdkV2Version = "2.38.9"
 val jacksonVersion = "2.19.1"
 
 val jacksonOverrides = Seq(
@@ -32,9 +32,8 @@ val jacksonOverrides = Seq(
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion,
   "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
 )
-
 
 lazy val associatedPressFeed =
   Project("associated-press-feed", file("associated-press"))
