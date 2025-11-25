@@ -1,7 +1,7 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 
 organization := "com.gu"
-lazy val scalaVersionSpec = "2.13.16"
+lazy val scalaVersionSpec = "2.13.17"
 
 /* normalise Debian package name */
 val normalisePackageName =
@@ -22,7 +22,7 @@ val distributionSettings = Seq(
 )
 
 val awsSdkV2Version = "2.38.9"
-val jacksonVersion = "2.19.1"
+val jacksonVersion = "2.19.4"
 
 val jacksonOverrides = Seq(
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
