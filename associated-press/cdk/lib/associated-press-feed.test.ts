@@ -9,6 +9,7 @@ describe('The AssociatedPressFeed stack', () => {
 			stack: 'media-service',
 			stage: 'TEST',
 			app: 'associated-press-feed',
+			env: { region: 'eu-west-1' },
 		});
 		const template = Template.fromStack(stack);
 		expect(template.toJSON()).toMatchSnapshot();
