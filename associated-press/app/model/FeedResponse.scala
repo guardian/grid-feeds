@@ -19,7 +19,7 @@ object FeedResponse extends Logging {
     )
   } match {
     case Success(response) => Some(response)
-    case Failure(error) =>
+    case Failure(error)    =>
       logger.error(s"Could not parse AP API response json", error)
       None
   }

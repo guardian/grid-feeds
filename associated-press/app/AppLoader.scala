@@ -21,7 +21,7 @@ class AppLoader extends ApplicationLoader {
 
     val loadedConfig = ConfigurationLoader.load(identity, credentials) {
       case identity: AwsIdentity => SSMConfigurationLocation.default(identity)
-      case _: DevIdentity =>
+      case _: DevIdentity        =>
         val home = System.getProperty("user.home")
         FileConfigurationLocation(
           new File(s"$home/.gu/$defaultAppName.private.conf")
