@@ -1,7 +1,7 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
 
 organization := "com.gu"
-lazy val scalaVersionSpec = "2.13.17"
+lazy val scalaVersionSpec = "2.13.18"
 
 /* normalise Debian package name */
 val normalisePackageName =
@@ -22,11 +22,12 @@ val distributionSettings = Seq(
 )
 
 val awsSdkV2Version = "2.38.9"
-val jacksonVersion = "2.19.4"
+val jacksonVersion = "2.20.1"
+val jacksonAnnotationsVersion = "2.20"
 
 val jacksonOverrides = Seq(
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
-  "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-annotations" % jacksonAnnotationsVersion,
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % jacksonVersion,
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
