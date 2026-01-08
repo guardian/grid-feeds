@@ -46,7 +46,7 @@ lazy val associatedPressFeed =
         ws,
         "software.amazon.awssdk" % "s3" % awsSdkV2Version,
         "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
-        "com.gu" %% "simple-configuration-ssm" % "8.2.1",
+        "com.gu" %% "simple-configuration-ssm" % "9.0.0",
         "org.scalatest" %% "scalatest" % "3.2.19" % "test"
       ),
       dependencyOverrides ++= jacksonOverrides,
