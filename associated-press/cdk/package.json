@@ -13,13 +13,13 @@
     "diff": "cdk diff --path-metadata false --version-reporting false"
   },
   "devDependencies": {
-    "@guardian/cdk": "62.3.2",
-    "@guardian/eslint-config": "^13.0.5",
+    "@guardian/cdk": "62.5.3",
+    "@guardian/eslint-config": "^14.0.0",
     "@guardian/prettier": "^10.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "18.11.19",
-    "eslint": "^9.39.2",
-    "jest": "^30.2.0",
+    "eslint": "^9.39.4",
+    "jest": "^30.3.0",
     "prettier": "^3.8.1",
     "source-map-support": "^0.5.20",
     "ts-jest": "^29.4.6",
