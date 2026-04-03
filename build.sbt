@@ -22,7 +22,7 @@ val distributionSettings = Seq(
 )
 
 val awsSdkV2Version = "2.42.25"
-val jacksonVersion = "2.21.1"
+val jacksonVersion = "2.21.2"
 val jacksonAnnotationsVersion = "2.21"
 
 val jacksonOverrides = Seq(
