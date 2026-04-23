@@ -47,7 +47,7 @@ lazy val associatedPressFeed =
         "software.amazon.awssdk" % "s3" % awsSdkV2Version,
         "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
         "com.gu" %% "simple-configuration-ssm" % "9.0.2",
-        "org.scalatest" %% "scalatest" % "3.2.19" % "test"
+        "org.scalatest" %% "scalatest" % "3.2.20" % "test"
       ),
       dependencyOverrides ++= jacksonOverrides,
       routesGenerator := InjectedRoutesGenerator,
