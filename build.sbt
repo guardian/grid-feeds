@@ -21,7 +21,7 @@ val distributionSettings = Seq(
   )
 )
 
-val awsSdkV2Version = "2.48.0"
+val awsSdkV2Version = "2.54.5"
 val jacksonVersion = "2.21.4"
 val jacksonAnnotationsVersion = "2.21"
 
@@ -46,7 +46,7 @@ lazy val associatedPressFeed =
         ws,
         "software.amazon.awssdk" % "s3" % awsSdkV2Version,
         "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
-        "com.gu" %% "simple-configuration-ssm" % "9.0.2",
+        "com.gu" %% "simple-configuration-ssm" % "13.0.0",
         "org.scalatest" %% "scalatest" % "3.2.20" % "test"
       ),
       dependencyOverrides ++= jacksonOverrides,
