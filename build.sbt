@@ -23,7 +23,7 @@ val distributionSettings = Seq(
 
 val awsSdkV2Version = "2.54.5"
 val jacksonVersion = "2.21.4"
-val jacksonAnnotationsVersion = "2.21"
+val jacksonAnnotationsVersion = "2.22"
 
 val jacksonOverrides = Seq(
   "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
